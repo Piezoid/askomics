@@ -3,7 +3,7 @@ import base64
 from datetime import date, time, datetime
 
 
-from .element import TurtleElement, CURIE
+from .element import TurtleElement, ObjectIdentifier, CURIE
 from .resource import Class
 
 
@@ -233,6 +233,27 @@ class XSDbase64Binary(Literal):
     python_type = bytes
     toXSDstr = staticmethod(lambda value: base64.b64encode(value).decode('ascii'))
     value = property(lambda self: base64.b64decode(self.value_str))
+
+
+# TurtleElement() delegating functionality depends on Literal() constructor, so it can only be defined here :
+def TurtleElement__new__(cls, arg):
+    """Delegating constructor for parsing only :
+    Accept a str of a resource (URI, CURIE, Literal) in turtle format.
+    """
+    assert isinstance(arg, str)
+    if isinstance(arg, cls):
+        return arg
+    else: # Parse a turtle resource identifier
+        try:
+            if arg[0] == '"':
+                return Literal(arg)
+            else:
+                return ObjectIdentifier(arg)
+        except ValueError as e:
+            raise ValueError('Malformed turtle resource identifier: %r.' % arg)
+TurtleElement.__new__ = TurtleElement__new__
+del TurtleElement__new__
+
 
 
 __all__ = [k for k,v in globals().items() if type(v) is XSDMeta]

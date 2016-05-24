@@ -1,6 +1,5 @@
 from urllib.parse import quote, unquote
 
-from . import literals
 
 __all__ = ['TurtleElement',
            'ObjectIdentifier',
@@ -27,21 +26,6 @@ class TurtleElement(str):
 
     """
     __slots__ = ()
-    def __new__(cls, arg):
-        """Delegating constructor for parsing only :
-        Accept a str of a resource (URI, CURIE, Literal) in turtle format.
-        """
-        assert isinstance(arg, str)
-        if isinstance(arg, cls):
-            return arg
-        else: # Parse a turtle resource identifier
-            try:
-                if arg[0] == '"':
-                    return literals.Literal(arg)
-                else:
-                    return ObjectIdentifier(arg)
-            except ValueError as e:
-                raise ValueError('Malformed turtle resource identifier: %r.' % arg)
 
     def __repr__(self):
         return "{0.__class__.__qualname__}({1})".format(self, str.__repr__(self))

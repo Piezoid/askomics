@@ -3,7 +3,6 @@ from collections import defaultdict
 
 from . import RDFS
 from .element import *
-from . import literals
 
 class Named:
     def __init__(self, uri=None, **kwargs):
@@ -130,7 +129,8 @@ class Resource(Named, metaclass=Class):
             elif isinstance(obj, Resource):
                 return obj.id
             else:
-                return literals.Literal(obj)
+                raise TypeError('%r is neither a TurtleElement or a Literal')
+                #return literals.Literal(obj)
 
         for predicate, objects in self._data.items():
             if type(objects) is set:
@@ -172,6 +172,11 @@ Resource.__init__(Class, uri=RDFS.Class)
 Resource.__init__(Resource, uri=RDFS.Resource)
 Resource.__init__(Property, uri=RDFS.Property)
 
+
+Property.range = Property(uri=RDFS.range)
+Property.domain = Property(uri=RDFS.domain)
+
+
 class FunctionalProperty(Property, uri=CURIE('owl:FunctionalProperty')):
     def __get__(self, obj, objtype):
         try:
@@ -187,9 +192,6 @@ class FunctionalProperty(Property, uri=CURIE('owl:FunctionalProperty')):
 
         return v
 
-
-Property.range = Property('rdfs:range')
-Property.domain = Property('rdfs:domain')
 
 class DatatypeProperty(Property, uri='owl:DatatypeProperty'):
     pass
