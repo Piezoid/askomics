@@ -1,6 +1,7 @@
 from operator import attrgetter
 from collections import defaultdict
 
+from .utils import refine_class
 from . import RDFS
 from .element import *
 
@@ -107,6 +108,7 @@ class Class(Resource, type, metaclass=heap_type):
         else:
             return False
 Class.__class__ = Class
+del heap_type
 
 class Resource(Named, metaclass=Class):
     "The class resource, everything."
@@ -163,18 +165,22 @@ class Property(Resource, uri=RDFS.Resource):
 
 Class.__bases__ = (Resource, type)
 
-Resource.label = Property(RDFS.label)
-Resource.comment = Property(RDFS.comment)
-Resource.type = Property(RDFS.type)
-Class.subClassOf = Property(RDFS.subClassOf)
+class Resource(metaclass=refine_class):
+    label = Property(RDFS.label)
+    comment = Property(RDFS.comment)
+    type = Property(RDFS.type)
+
+class Class(metaclass=refine_class):
+    subClassOf = Property(RDFS.subClassOf)
 
 Resource.__init__(Class, uri=RDFS.Class)
 Resource.__init__(Resource, uri=RDFS.Resource)
 Resource.__init__(Property, uri=RDFS.Property)
 
 
-Property.range = Property(uri=RDFS.range)
-Property.domain = Property(uri=RDFS.domain)
+class Property(metaclass=refine_class):
+    range = Property(uri=RDFS.range)
+    domain = Property(uri=RDFS.domain)
 
 
 class FunctionalProperty(Property, uri=CURIE('owl:FunctionalProperty')):

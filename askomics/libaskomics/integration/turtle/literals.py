@@ -236,23 +236,25 @@ class XSDbase64Binary(Literal):
 
 
 # TurtleElement() delegating functionality depends on Literal() constructor, so it can only be defined here :
-def TurtleElement__new__(cls, arg):
-    """Delegating constructor for parsing only :
-    Accept a str of a resource (URI, CURIE, Literal) in turtle format.
-    """
-    assert isinstance(arg, str)
-    if isinstance(arg, cls):
-        return arg
-    else: # Parse a turtle resource identifier
-        try:
-            if arg[0] == '"':
-                return Literal(arg)
-            else:
-                return ObjectIdentifier(arg)
-        except ValueError as e:
-            raise ValueError('Malformed turtle resource identifier: %r.' % arg)
-TurtleElement.__new__ = TurtleElement__new__
-del TurtleElement__new__
+from .utils import refine_class
+#raise(ValueError('TurtleElement' in globals()))
+class TurtleElement(metaclass=refine_class):
+    def __new__(cls, arg):
+        """Delegating constructor for parsing only :
+        Accept a str of a resource (URI, CURIE, Literal) in turtle format.
+        """
+        assert isinstance(arg, str)
+        if isinstance(arg, cls):
+            return arg
+        else: # Parse a turtle resource identifier
+            try:
+                if arg[0] == '"':
+                    return Literal(arg)
+                else:
+                    return ObjectIdentifier(arg)
+            except ValueError as e:
+                raise ValueError('Malformed turtle resource identifier: %r.' % arg)
+
 
 
 
