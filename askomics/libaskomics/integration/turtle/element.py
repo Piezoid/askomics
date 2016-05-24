@@ -21,7 +21,8 @@ class TurtleElement(str):
     Directly instantiating subclasses allows to produce specific elements from python values:
     >>> CURIE('plop')
     CURIE(':plop')
-    >>> literals.Literal(True)
+    >>> from .literals import Literal
+    >>> Literal(True)
     XSDboolean("true")
 
     """
