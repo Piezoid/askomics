@@ -2,7 +2,7 @@ from urllib.parse import quote, unquote
 
 
 __all__ = ['TurtleElement',
-           'ObjectIdentifier',
+           'ResourceIdentifier',
            'CURIE',
            'URI',
            'BNode']
@@ -38,7 +38,7 @@ class TurtleElement(str):
         return self
 
 
-class ObjectIdentifier(TurtleElement):
+class ResourceIdentifier(TurtleElement):
     "URI, CURIE and BNode"
     __slots__ = ()
     def __new__(cls, s):
@@ -53,7 +53,7 @@ class ObjectIdentifier(TurtleElement):
             else:
                 cls = CURIE
         else:
-            raise ValueError("ObjectIdentifier can only construct URI, CURIE and BNode")
+            raise ValueError("ResourceIdentifier can only construct URI, CURIE and BNode")
 
         return str.__new__(cls, s)
 
@@ -61,7 +61,7 @@ class ObjectIdentifier(TurtleElement):
     def id(self):
         return self
 
-class URI(ObjectIdentifier):
+class URI(ResourceIdentifier):
     __slots__ = ()
     def __new__(cls, uri):
         if isinstance(uri, URI):
@@ -77,7 +77,7 @@ class URI(ObjectIdentifier):
     def uri(self):
         return self[1:-1]
 
-class CURIE(ObjectIdentifier):
+class CURIE(ResourceIdentifier):
     __slots__ = ()
     def __new__(cls, prefix, ident=None):
         if isinstance(prefix, CURIE):
@@ -105,7 +105,7 @@ class CURIE(ObjectIdentifier):
     value = property(lambda self: self.args[1])
 
 
-class BNode(ObjectIdentifier):
+class BNode(ResourceIdentifier):
     "Blank TurtleElement"
     def __new__(cls, s):
         if isinstance(s, str):

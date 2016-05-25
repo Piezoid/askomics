@@ -3,7 +3,7 @@ import base64
 from datetime import date, time, datetime
 
 
-from .element import TurtleElement, ObjectIdentifier, CURIE
+from .element import TurtleElement, ResourceIdentifier, CURIE
 from .resource import Class
 
 
@@ -251,7 +251,7 @@ class TurtleElement(metaclass=refine_class):
                 if arg[0] == '"':
                     return Literal(arg)
                 else:
-                    return ObjectIdentifier(arg)
+                    return ResourceIdentifier(arg)
             except ValueError as e:
                 raise ValueError('Malformed turtle resource identifier: %r.' % arg)
 

@@ -8,7 +8,7 @@ from .element import *
 class Named:
     def __init__(self, uri=None, **kwargs):
         if uri is not None:
-            uri = ObjectIdentifier(uri)
+            uri = ResourceIdentifier(uri)
         else:
             #print('New bnode for %r' % type(self))
             uri = BNode(self)
@@ -65,7 +65,7 @@ class Class(Resource, type, metaclass=heap_type):
     #def __new__(meta, name, bases, dct):
         ## Substitute the class uri with an accesor for the instance's uri
         #try:
-            #dct['_id'] = ObjectIdentifier(dct.pop('uri'))
+            #dct['_id'] = ResourceIdentifier(dct.pop('uri'))
         #except KeyError:
             #pass
         #cls = super().__new__(meta, name, bases, dct)
