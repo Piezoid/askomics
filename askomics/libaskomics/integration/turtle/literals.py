@@ -9,7 +9,7 @@ from .resource import Class
 
 NoneType = type(None)
 
-class XSDMeta(Class):
+class Datatype(Class):
     #@classmethod
     uri2class = {}
     def __new__(meta, name, bases, dct, **kwargs):
@@ -33,10 +33,10 @@ class XSDMeta(Class):
         assert isinstance(python_type, type)
         meta = type(cls)
         for parent in cls.__mro__: # All indirect bases
-            if isinstance(parent, meta): # select only classes with XSDMeta metaclass
+            if isinstance(parent, meta): # select only classes with Datatype metaclass
                     parent._type2subclasses[python_type] = cls
 
-class Literal(TurtleElement, metaclass=XSDMeta):
+class Literal(TurtleElement, metaclass=Datatype):
     """Base class of XSD Literals.
     Literals are a str object encoding XSD values. This class can be instantiated with a turtle str (with " quotes included).
 
@@ -223,11 +223,11 @@ class XSDdateTime(Literal):
 class XSDdate(XSDdateTime):
     python_type = date
     toXSDstr = staticmethod(lambda value: value.isoformat())
-    value = property(lambda self: datetime.strptime(self.value_str, '%Y-%m-%d'))
+    value = property(lambda self: datetime.strptime(self.value_str, '%Y-%m-%d').date())
 
 class XSDtime(XSDdateTime):
     python_type = time
-    value = property(lambda self: datetime.strptime(self.value_str, '%H:%M:%S'))
+    value = property(lambda self: datetime.strptime(self.value_str, '%H:%M:%S').time())
 
 class XSDbase64Binary(Literal):
     python_type = bytes
@@ -258,4 +258,4 @@ class TurtleElement(metaclass=refine_class):
 
 
 
-__all__ = [k for k,v in globals().items() if type(v) is XSDMeta]
+__all__ = [k for k,v in globals().items() if type(v) is Datatype]

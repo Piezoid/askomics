@@ -44,8 +44,6 @@ class heap_type(type): pass
 class Resource:
     def __init__(self, **kwargs):
         self._data = defaultdict(set)
-        pass
-
 
     def _mkpseudoprop(name):
         def fget(self):
@@ -93,20 +91,18 @@ class Class(Resource, type, metaclass=heap_type):
             if hasattr(parent, '_uri2classes'):
                 parent._uri2classes[cls.id] = cls
 
-    @classmethod
-    def get_class(meta, uri):
-        return meta._uri2classes[uri]
+    def get_class(cls, uri):
+        return cls._uri2classes[uri]
 
     def __instancecheck__(cls, resource):
-        assert issubclass(cls, Resource)
-        if type.__instancecheck__(Resource, resource):
-            if type.__instancecheck__(cls, resource):
-                return True
-            else:
-                subclass_uris = cls._indentifier2classes
-                return any(ty in subclass_uris for ty in resource.type)
+        assert type.__instancecheck__(Class, cls)
+        if type.__instancecheck__(cls, resource):
+            return True
         else:
-            return False
+            subclass_uris = cls._uri2classes
+            types = getattr(resource, 'type', ())
+            return any(ty in subclass_uris for ty in types)
+
 Class.__class__ = Class
 del heap_type
 
