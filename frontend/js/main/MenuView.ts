@@ -1,5 +1,8 @@
 /*jshint esversion: 6 */
 
+import * as forceLayoutManager from './ForceLayoutManager';
+import * as userAbstraction from './UserAbstraction';
+
 /*
   Manage Menu View to select and unselect proposition of element/link
 */
@@ -28,8 +31,7 @@ export function buildLiView(uri,label,submenu) {
   };
 
   /* initialize the view. The abstraction have to be done */
-export function start(node) {
-    menuView = this;
+export function start() {
 
     /* to close the menu when a click event outside */
     $(window).click(function() {
@@ -55,11 +57,11 @@ export function start(node) {
 
 
     // <li><a href="#" class="small" data-value="option1" tabIndex="-1"><input type="checkbox"/>&nbsp;Option 1</a></li>
-    lentities = userAbstraction.getEntities();
+    const lentities = userAbstraction.getEntities();
 
     $.each(lentities, function(i) {
-      nodeuri = lentities[i];
-      var li = menuView.buildLiView(nodeuri,userAbstraction.removePrefix(nodeuri),false);
+      const nodeuri = lentities[i];
+      var li = buildLiView(nodeuri,userAbstraction.removePrefix(nodeuri),false);
       li.on('click', function() {
         var span = $(this).find(".glyphicon");
         var cur_uri = $(this).attr("uri");
@@ -91,7 +93,7 @@ export function start(node) {
       $.each(listRelObj, function(objecturi) {
         $.each(listRelObj[objecturi], function(idxrel) {
           var rel = listRelObj[objecturi][idxrel];
-          var li = menuView.buildLiView(rel,userAbstraction.removePrefix(rel)+"&#8594;"+userAbstraction.removePrefix(objecturi),true);
+          var li = buildLiView(rel,userAbstraction.removePrefix(rel)+"&#8594;"+userAbstraction.removePrefix(objecturi),true);
           li.attr("nodeuri",nodeuri)
             .on('click', function() {
               /* when this li is unavailable, we can do nothing */
@@ -120,11 +122,11 @@ export function start(node) {
       /* next entity */
     });
 
-    positionableEntities = userAbstraction.getPositionableEntities();
+    const positionableEntities = userAbstraction.getPositionableEntities();
     if (Object.keys(positionableEntities).length>0) {
       /* positionable object */
-      posuri = "positionable";
-      var li = menuView.buildLiView(posuri,userAbstraction.removePrefix(posuri),false);
+      const posuri = "positionable";
+      var li = buildLiView(posuri,userAbstraction.removePrefix(posuri),false);
       li.attr("nodeuri",posuri)
         .on('click', function() {
           var span = $(this).find(".glyphicon");

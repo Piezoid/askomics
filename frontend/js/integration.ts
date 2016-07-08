@@ -1,4 +1,59 @@
 /*jshint esversion: 6 */
+
+import RestServiceJs from './utils/RestManagement';
+import { displayModal, hideModal } from './utils/Modal';
+
+import * as Handlebars from 'handlebars';
+
+
+require('blueimp-file-upload/js/jquery.fileupload.js');
+require('blueimp-file-upload/js/jquery.fileupload-process.js');
+//require('imports?define=>false!blueimp-file-upload/js/jquery.fileupload-validate.js');
+require('imports?define=>false!blueimp-file-upload/js/jquery.fileupload-ui.js');
+
+export function startUploadForm () {
+  // Initialize the jQuery File Upload widget
+  $('#fileupload').fileupload({
+      // Uncomment the following to send cross-domain cookies:
+      //xhrFields: {withCredentials: true},
+      url: '/up/file/'
+  });
+
+  // Enable iframe cross-domain access via redirect option
+  $('#fileupload').fileupload(
+      'option',
+      'redirect',
+      window.location.href.replace(
+          /\/[^\/]*$/,
+          '/cors/result.html?%s'
+      )
+  );
+
+  // Load existing files:
+  $('#fileupload').addClass('fileupload-processing');
+  $.ajax({
+      // Uncomment the following to send cross-domain cookies:
+      //xhrFields: {withCredentials: true},
+      url: '/up/file/', //$('#fileupload').fileupload('option', 'url'),
+      dataType: 'json',
+      context: $('#fileupload')[0]
+  }).always(function () {
+      $(this).removeClass('fileupload-processing');
+  }).done(function (result) {
+      $(this).fileupload('option', 'done')
+          .call(this, $.Event('done'), {result: result});
+  });
+
+  // Integrate button
+  $('.integrate-button').click(function() {
+      var service = new RestServiceJs("source_files_overview");
+      service.getAll(function(data) {
+          displayTable(data);
+      });
+  });
+}
+
+
 /**
  * Register event handlers for integration
  */
@@ -56,10 +111,9 @@ function cols2rows(items) {
 /**
  * Show preview data on the page
  */
-function displayTable(data) {
+export function displayTable(data) {
     // Transform columns to rows
-    var i;
-    for(i=0, l=data.files.length; i<l; i++) {
+    for(let i=0, l=data.files.length; i<l; i++) {
         if ('preview_data' in data.files[i]) {
             data.files[i].preview_data = cols2rows(data.files[i].preview_data);
         }
@@ -74,14 +128,15 @@ function displayTable(data) {
     $("#content_integration").html(html);
 
     // Select the correct type for each column
-    for(i=0, l=data.files.length; i<l; i++) {
+    for(let i=0, l=data.files.length; i<l; i++) {
 
         if ('column_types' in data.files[i]) {
 
             var cols = data.files[i].column_types;
             for(var j=0, m=cols.length; j<m; j++) {
                 var selectbox = $('div#content_integration form.template-source_file:eq(' + i + ') select.column_type:eq(' + j + ')');
-                var values = selectbox.find("option").map(function() { return $(this).val(); });
+                var values = selectbox.find("option").toArray().map(e => $(e).val());
+                //.map(function() { return $(this).val(); });
 
                 if ($.inArray(cols[j], ['start', 'end', 'numeric']) == -1) {
                     $.each(['start', 'end', 'numeric'], function( index, value ) {

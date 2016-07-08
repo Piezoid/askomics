@@ -1,5 +1,8 @@
 /*jshint esversion: 6 */
 
+import * as userAbstraction from './UserAbstraction';
+import { hideModal } from '../utils/Modal';
+
     var AskomicsGraphBuilderVersion = 1.0           ;
     /* ========================================= ATTRIBUTES ============================================= */
     var SPARQLIDgeneration = {} ; /* { <ENT1> : 5, ... }  last index used to named variable */
@@ -38,13 +41,13 @@ export function setNodesAndLinksFromState(dump) {
         }
         /* source and target don't have the good reference....we fix it*/
         for (var link of _instanciedLinkGraph) {
-            t = this.findElt(_instanciedNodeGraph,link.source.id);
+            t = findElt(_instanciedNodeGraph,link.source.id);
             if ( ! t ) {
               throw Error("Can not find node with ID:"+link.source.id);
             }
 
             link.source = t[1];
-            t = this.findElt(_instanciedNodeGraph,link.target.id);
+            t = findElt(_instanciedNodeGraph,link.target.id);
             if ( ! t ) {
               throw Error("Can not find node with ID:"+link.target.id);
             }
@@ -105,7 +108,7 @@ export function removeInstanciedNode(node) {
           /* the second node is newest than node.id, we have to remove it ! */
           if ( targetNode.id > currentNode.id ) { // && targetNode in _instanciedNodeGraph ) {
             // removing node
-            listLinkRemoved = listLinkRemoved.concat(this.removeInstanciedNode(targetNode));
+            listLinkRemoved = listLinkRemoved.concat(removeInstanciedNode(targetNode));
             i=0;
             continue; /* !!!!! reinit the loop because _instanciedLinkGraph have change !!!!!!!!!! */
             //console.log("111:"+JSON.stringify(listLinkRemoved));
@@ -157,9 +160,9 @@ export function removeInstanciedLink(idLink) {
       if ( linkNode.source.id.nlink[linkNode.target.id] <= 0 ) {
         // keep the oldest node !
         if ( linkNode.source.id > linkNode.target.id ) {
-          this.removeInstanciedNode(linkNode.source);
+          removeInstanciedNode(linkNode.source);
         } else {
-          this.removeInstanciedNode(linkNode.target);
+          removeInstanciedNode(linkNode.target);
         }
       }
       //removing the link
@@ -170,7 +173,7 @@ export function removeInstanciedLink(idLink) {
 
     /* create and return a new ID to instanciate a new SPARQL variate */
 export function setSPARQLVariateId(nodeOrLinkOrAttribute) {
-      lab = nodeOrLinkOrAttribute.label;
+      const lab = nodeOrLinkOrAttribute.label;
       if ( ! SPARQLIDgeneration[lab] ) {
         SPARQLIDgeneration[lab] = 0 ;
       }
@@ -187,8 +190,8 @@ export function setId(node) {
     };
 
 export function setStartpoint(node) {
-      this.setSuggestedNode(node,0,0);
-      this.instanciateNode(node);
+      setSuggestedNode(node,0,0);
+      instanciateNode(node);
       return node;
     };
 
@@ -223,7 +226,7 @@ export function setSuggestedNode(node,x,y) {
       var scaleY = Math.random()<0.5?-1:1;
       node.x = x+scaleX*sc;
       node.y = y+scaleY*sc;
-      this.setId(node);
+      setId(node);
       node.name = node.label;
       node.weight = 0;
       node.nlink = {}; // number of relation with a node.
@@ -241,7 +244,7 @@ export function setPositionable(node) {
 export function instanciateNode(node) {
       node.suggested = false;
       node.actif = true ;
-      this.setSPARQLVariateId(node);
+      setSPARQLVariateId(node);
       node.name = node.SPARQLid;
       _instanciedNodeGraph.push(node);
     };
@@ -258,7 +261,7 @@ export function isInstanciatedNode(node) {
 export function instanciateLink(links) {
       for (var l of links ) {
         l.suggested = false;
-        this.setSPARQLVariateId(l);
+        setSPARQLVariateId(l);
         _instanciedLinkGraph.push(l);
       }
     };
@@ -292,8 +295,8 @@ export function setAttributeOrCategoryForNode(AttOrCatArray,attributeForUri,node
       AttOrCatArray[attributeForUri.uri].type = attributeForUri.type ;
       AttOrCatArray[attributeForUri.uri].label = attributeForUri.label ;
 
-      this.setSPARQLVariateId(AttOrCatArray[attributeForUri.uri]);
-      this.setId(AttOrCatArray[attributeForUri.uri]);
+      setSPARQLVariateId(AttOrCatArray[attributeForUri.uri]);
+      setId(AttOrCatArray[attributeForUri.uri]);
 
       /* by default all attributes is ask */
       AttOrCatArray[attributeForUri.uri].actif = false ;
@@ -302,9 +305,9 @@ export function setAttributeOrCategoryForNode(AttOrCatArray,attributeForUri,node
 
 export function buildAttributeOrCategoryForNode(attributeForUri,node) {
       if (attributeForUri.type.indexOf("http://www.w3.org/2001/XMLSchema#") < 0) {
-        return this.setAttributeOrCategoryForNode(node.categories,attributeForUri,node);
+        return setAttributeOrCategoryForNode(node.categories,attributeForUri,node);
       }else {
-        return this.setAttributeOrCategoryForNode(node.attributes,attributeForUri,node);
+        return setAttributeOrCategoryForNode(node.attributes,attributeForUri,node);
       }
     };
 
@@ -384,7 +387,7 @@ export function buildConstraintsGraphForCategory(nodeAttribute,attributeId) {
 
       var ua = userAbstraction;
 
-      for (idx=_instanciedNodeGraph.length-1;idx>=0;idx--) {
+      for (let idx=_instanciedNodeGraph.length-1;idx>=0;idx--) {
         var node = _instanciedNodeGraph[idx];
         if (nodeAttribute.id != node.id ) continue ;
         /* add node inside */
@@ -415,15 +418,15 @@ export function buildPositionableConstraintsGraph(infos,source,target,constraint
       console.log("---- info positionable ----");
       console.log(JSON.stringify(info));
 
-      taxonNodeId = node.categories[info[node.uri].taxon].SPARQLid;
-      refNodeId = node.categories[info[node.uri].ref].SPARQLid;
-      startNodeId = node.attributes[info[node.uri].start].SPARQLid;
-      endNodeId = node.attributes[info[node.uri].end].SPARQLid;
+      const taxonNodeId = node.categories[info[node.uri].taxon].SPARQLid;
+      const refNodeId = node.categories[info[node.uri].ref].SPARQLid;
+      const startNodeId = node.attributes[info[node.uri].start].SPARQLid;
+      const endNodeId = node.attributes[info[node.uri].end].SPARQLid;
 
-      taxonSecNodeId = secondNode.categories[info[secondNode.uri].taxon].SPARQLid;
-      refSecNodeId = secondNode.categories[info[secondNode.uri].ref].SPARQLid;
-      startSecNodeId = secondNode.attributes[info[secondNode.uri].start].SPARQLid;
-      endSecNodeId = secondNode.attributes[info[secondNode.uri].end].SPARQLid;
+      const taxonSecNodeId = secondNode.categories[info[secondNode.uri].taxon].SPARQLid;
+      const refSecNodeId = secondNode.categories[info[secondNode.uri].ref].SPARQLid;
+      const startSecNodeId = secondNode.attributes[info[secondNode.uri].start].SPARQLid;
+      const endSecNodeId = secondNode.attributes[info[secondNode.uri].end].SPARQLid;
 
 
       constraintRelations.push([ua.URI(node.uri),'displaySetting:position_taxon',"?"+"id_taxon_"+node.SPARQLid]);
@@ -451,11 +454,7 @@ export function buildPositionableConstraintsGraph(infos,source,target,constraint
       constraintRelations.push(["?"+'URI'+secondNode.SPARQLid,"?"+"id_start_"+secondNode.SPARQLid,"?"+startSecNodeId]);
       constraintRelations.push(["?"+'URI'+secondNode.SPARQLid,"?"+"id_end_"+secondNode.SPARQLid,"?"+endSecNodeId]);
 
-      if (infos.strict) {
-        equalsign = '';
-      }else{
-        equalsign = '=';
-      }
+      const equalsign = infos.strict ? '' : '=';
 
       if (infos.same_ref) {
         filters.push('FILTER(' + "?"+refNodeId + "=" + "?"+refSecNodeId +')');
@@ -480,11 +479,10 @@ export function buildPositionableConstraintsGraph(infos,source,target,constraint
         case 'near':
           alert('sorry, near query is not implemanted yet !');
           hideModal();
-          exit();
             break;
 
         default:
-          throw new Error("AskomicsGraphBuilder.prototype.buildPositionableConstraintsGraph: unkown type :"+JSON.stringify(type));
+          throw new Error("AskomicsGraphBuilder.prototype.buildPositionableConstraintsGraph: unkown type :"+JSON.stringify(infos.type));
       }
     };
 
@@ -504,7 +502,7 @@ export function buildConstraintsGraph() {
 
       var ua = userAbstraction;
       /* TODO: better if loop is inversed ?*/
-      for (idx=0;idx<_instanciedNodeGraph.length;idx++) {
+      for (let idx=0;idx<_instanciedNodeGraph.length;idx++) {
         var node = dup_node_array[idx];
 
         /* add node inside */
@@ -512,7 +510,7 @@ export function buildConstraintsGraph() {
         constraintRelations.push(["?"+'URI'+node.SPARQLid,'rdfs:label',"?"+node.SPARQLid]);
 
         /* find relation with this node and add it as a constraint  */
-        for (ilx=dup_link_array.length-1;ilx>=0;ilx--) {
+        for (let ilx=dup_link_array.length-1;ilx>=0;ilx--) {
           if ( (dup_link_array[ilx].source.id == node.id) ||  (dup_link_array[ilx].target.id == node.id) ) {
             if ( dup_link_array[ilx].positionable ) {
 
@@ -524,7 +522,7 @@ export function buildConstraintsGraph() {
               posInfos.same_ref = dup_link_array[ilx].sameRef;
               posInfos.strict = dup_link_array[ilx].strict;
 
-              this.buildPositionableConstraintsGraph(posInfos,nodeTarget,nodeSource,constraintRelationsPositionable,filtersPositionable);
+              buildPositionableConstraintsGraph(posInfos,nodeTarget,nodeSource,constraintRelationsPositionable,filtersPositionable);
             } else {
               constraintRelations.push(["?"+'URI'+dup_link_array[ilx].source.SPARQLid,ua.URI(dup_link_array[ilx].uri),"?"+'URI'+dup_link_array[ilx].target.SPARQLid]);
             }
@@ -574,11 +572,11 @@ export function buildConstraintsGraph() {
         }
       }
       /* Add positionalme constraint and filter in last */
-      for (i=0;i<constraintRelationsPositionable.length;i++) {
+      for (let i=0;i<constraintRelationsPositionable.length;i++) {
         constraintRelations.push(constraintRelationsPositionable[i]);
       }
       console.log("------------");
-      for (i=0;i<filtersPositionable.length;i++) {
+      for (let i=0;i<filtersPositionable.length;i++) {
         console.log(filtersPositionable[i]);
         filters.push(filtersPositionable[i]);
       }
@@ -614,8 +612,8 @@ export function attributesDisplaying(SPARQLid) {
       }
     };
 
-    AskomicsGraphBuilder.prototype.setFilterAttributes= function(nodeId,SPARQLid,value,filter) {
-      var tab = this.findElt(_instanciedNodeGraph,nodeId);
+export function setFilterAttributes(nodeId,SPARQLid,value,filter) {
+      var tab = findElt(_instanciedNodeGraph,nodeId);
       var node = tab[1];
       if (! node ) {
         throw Error("AskomicsGraphBuilder.prototype.setFilterAttributes don't find node id:"+nodeId);

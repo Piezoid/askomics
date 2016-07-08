@@ -4,6 +4,10 @@
   Manage Menu View to select and unselect proposition of element/link
 */
 
+import RestServiceJs from '../utils/RestManagement';
+import * as graphBuilder from './GraphBuilder';
+import * as queryHandler from './QueryHandler';
+
 export function start() {
 
     //$("#uploadedQuery")
@@ -15,7 +19,7 @@ export function start() {
 
     $("#dwl-query-sparql").on('click', function(d) {
       var service = new RestServiceJs("getSparqlQueryInTextFormat");
-      var jdata = prepareQuery(false,0, false);
+      var jdata = queryHandler.prepareQuery(false, 0, false);
       var date = new Date().getTime();
       var current = this;
       var query = "" ;

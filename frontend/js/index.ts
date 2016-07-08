@@ -1,30 +1,20 @@
 /*jshint esversion: 6 */
 
-askomicsInitialization = false;
+import * as Handlebars from 'handlebars'
 
+import { displayModal, hideModal } from './utils/Modal';
+import RestServiceJs from './utils/RestManagement';
+
+import * as askomics from './main';
+
+
+let askomicsInitialization = false;
 function startRequestSessionAskomics() {
   if ( askomicsInitialization ) return ;
   // Initialize the graph with the selected start point.
   $("#init").hide();
   $("#queryBuilder").show();
-  d3.select("svg").remove();
-
-  /* To manage construction of SPARQL Query */
-  graphBuilder = new AskomicsGraphBuilder();
-  /* To manage information about current node */
-  nodeView = new AskomicsNodeView();
-  /* To manage Attribute view on UI */
-  attributesView = new AskomicsAttributesView();
-  /* To manage Attribute view on UI */
-  linksView = new AskomicsLinksView();
-  /* To manage the D3.js Force Layout  */
-  forceLayoutManager = new AskomicsForceLayoutManager();
-  /* To manage information about User Datasrtucture  */
-  userAbstraction = new AskomicsUserAbstraction();
-  /* To manage information about menu propositional view */
-  menuView = new AskomicsMenuView();
-  /* To manage information about File menu */
-  menuFile = new AskomicsMenuFile();
+  $("svg").remove();
 
   askomicsInitialization = true;
 }
@@ -32,8 +22,9 @@ function startRequestSessionAskomics() {
 function startVisualisation() {
     //Following code is automatically executed at start or is triggered by the action of the user
     startRequestSessionAskomics();
-    forceLayoutManager.start();
+    askomics.forceLayoutManager.start();
 }
+
 
 function loadStartPoints() {
 
@@ -64,8 +55,8 @@ function loadStatistics(modal) {
     displayModal('Please Wait', '', 'Close');
   }
 
-  abstraction = new AskomicsUserAbstraction();
-  abstraction.loadUserAbstraction();
+  const userAbstraction = askomics.userAbstraction;
+
 
 
   var service = new RestServiceJs("statistics");
@@ -79,21 +70,21 @@ function loadStatistics(modal) {
 
     $("#deleteButtons").append("<p><button id='btn-empty' onclick='emptyDatabase(\"confirm\")' class='btn btn-danger'>Empty database</button></p>");
 
-    table=$("<table></table>").addClass('table').addClass('table-bordered');
-    th = $("<tr></tr>").addClass("table-bordered").attr("style", "text-align:center;");
+    let table=$("<table></table>").addClass('table').addClass('table-bordered');
+    let th = $("<tr></tr>").addClass("table-bordered").attr("style", "text-align:center;");
     th.append($("<th></th>").text("Class"));
     th.append($("<th></th>").text("Nb"));
     table.append(th);
 
     $.each(stats['class'], function(key, value) {
-      tr = $("<tr></tr>")
+      let tr = $("<tr></tr>")
             .append($("<td></td>").text(key))
             .append($("<td></td>").text(value.count));
       table.append(tr);
     });
     $('#content_statistics').append(table);
 
-    var entities = abstraction.getEntities() ;
+    var entities = userAbstraction.getEntities() ;
 
     table=$("<table></table>").addClass('table').addClass('table-bordered');
     th = $("<tr></tr>").addClass("table-bordered").attr("style", "text-align:center;");
@@ -102,14 +93,14 @@ function loadStatistics(modal) {
     table.append(th);
 
     for (var ent1 in entities ) {
-      tr = $("<tr></tr>")
-            .append($("<td></td>").text(abstraction.removePrefix(entities[ent1])));
-            rels = "";
-            var t = abstraction.getRelationsObjectsAndSubjectsWithURI(entities[ent1]);
+      let tr = $("<tr></tr>")
+            .append($("<td></td>").text(userAbstraction.removePrefix(entities[ent1])));
+            let rels = "";
+            var t = userAbstraction.getRelationsObjectsAndSubjectsWithURI(entities[ent1]);
             var subjectTarget = t[0];
             for ( var ent2 in subjectTarget) {
               for (var rel of subjectTarget[ent2]) {
-                rels += abstraction.removePrefix(entities[ent1]) + " ----" + abstraction.removePrefix(rel) + "----> " + abstraction.removePrefix(ent2) + "</br>";
+                rels += userAbstraction.removePrefix(entities[ent1]) + " ----" + userAbstraction.removePrefix(rel) + "----> " + userAbstraction.removePrefix(ent2) + "</br>";
               }
             }
 
@@ -128,13 +119,13 @@ function loadStatistics(modal) {
 
     for (ent1 in entities ) {
     //$.each(stats['class'], function(key, value) {
-      tr = $("<tr></tr>")
-            .append($("<td></td>").text(abstraction.removePrefix(entities[ent1])));
-            attrs = "";
-            cats = "";
-            var listAtt = abstraction.getAttributesEntity(entities[ent1]);
+      let tr = $("<tr></tr>")
+            .append($("<td></td>").text(userAbstraction.removePrefix(entities[ent1])));
+            let attrs = "";
+            let cats = "";
+            var listAtt = userAbstraction.getAttributesEntity(entities[ent1]);
             for (var att of listAtt) {
-                attrs += '- '+att.label +' :'+abstraction.removePrefix(att.type)+ "</br>";
+                attrs += '- '+att.label +' :'+userAbstraction.removePrefix(att.type)+ "</br>";
             }
             tr.append($("<td></td>").html(attrs));
       table.append(tr);
@@ -178,24 +169,6 @@ function emptyDatabase(value) {
     }
 }
 
-function displayModal(title, message, button) {
-    $('#modalTitle').text(title);
-    if (message == '') {
-      $('.modal-body').hide();
-      $('.modal-sm').css('width', '300px');
-    }else{
-      $('.modal-sm').css('width', '700px');
-      $('.modal-body').show();
-      $('#modalMessage').text(message);
-    }
-    $('#modalButton').text(button);
-    $('#modal').modal('show');
-}
-
-function hideModal(){
-    $('#modal').modal('hide');
-}
-
 
 function downloadTextAsFile(filename, text) {
     // Download text as file
@@ -225,7 +198,7 @@ $(function () {
           fr.onload = function(e) {
             var contents = e.target.result;
             startRequestSessionAskomics();
-            forceLayoutManager.startWithQuery(contents);
+            askomics.forceLayoutManager.startWithQuery(contents);
           };
           fr.readAsText(uploadedFile);
       }
@@ -236,7 +209,10 @@ $(function () {
         var service = new RestServiceJs("up/");
         service.getAll(function(formHtmlforUploadFiles) {
           $('div#content_integration').html(formHtmlforUploadFiles.html);
-        });
+          // Dynamically load integration components
+          require.ensure(['./integration'], require =>
+            require<any>('./integration').startUploadForm());
+          }, 'integration');
     });
 
     // Visual effect on active tab (Ask! / Integrate / Credits)
@@ -258,3 +234,5 @@ $(function () {
         return new Handlebars.SafeString(nl2br);
     });
 });
+
+window.askomics = Object.assign({startVisualisation, loadStartPoints, loadStatistics}, askomics);

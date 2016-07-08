@@ -1,13 +1,26 @@
 /*jshint esversion: 6 */
 
+import * as d3 from 'd3';
+
+import * as graphBuilder from './GraphBuilder';
+import * as nodeView from './NodeView';
+import * as attributesView from './AttributesView';
+import * as linksView from './LinksView';
+import * as forceLayoutManager from './ForceLayoutManager';
+import * as userAbstraction from './UserAbstraction';
+import * as menuView from './MenuView';
+import * as menuFile from './MenuFile';
+
 /*
 */
-  var w = $("#svgdiv").width();
+  let w: number;
   var h = 350 ;
   var configDisplay = {
     rNode        : 12,
     opacityNode  : "0.5"
   };
+
+  let vis: d3.Selection<any>;
 
   /* filter to hide and show proposition node and links */
   var _hideProposedUriNode    = [] ;
@@ -20,12 +33,12 @@ export function getArrayForProposedUri(type) {
     if ( type == "link" ) {
       return _hideProposedUriLink;
     }
-    throw new Error("AskomicsForceLayoutManager.prototype.getArrayForProposedUri Devel error => type !=node and link :"+type+" uri:"+uri);
+    throw new Error("AskomicsForceLayoutManager.getArrayForProposedUri Devel error => type !=node and link :"+type+" uri:"+uri);
   };
 
 export function offProposedUri(type,uri) {
 
-    tab = this.getArrayForProposedUri(type);
+    const tab = getArrayForProposedUri(type);
 
     for (var uriI of tab) {
       if (uriI == uri) return;
@@ -35,7 +48,7 @@ export function offProposedUri(type,uri) {
 
 export function onProposedUri(type,uri) {
 
-    tab = this.getArrayForProposedUri(type);
+    const tab = getArrayForProposedUri(type);
 
     for (var i in tab) {
       if (tab[i] == uri ) {
@@ -47,7 +60,7 @@ export function onProposedUri(type,uri) {
 
 export function isProposedUri(type,uri) {
 
-    tab = this.getArrayForProposedUri(type);
+    const tab = getArrayForProposedUri(type);
 
     for (var i in tab) {
       if (tab[i] == uri ) {
@@ -127,7 +140,28 @@ export function normalsizeRightview() {
     }
   });
 
-  var vis = d3.select("#svgdiv")
+
+  var force = d3.layout.force();
+
+  var nodes = force.nodes();
+  var links = force.links();
+
+  var colorPalette = ["yellowgreen","teal","paleturquoise","peru","tomato","steelblue","lightskyblue","lightcoral"];
+  var idxColorPalette = 0 ;
+      /* Color associate with Uri */
+  var colorUriList = {} ;
+
+  var ctrlPressed = false ;
+  var selectNodes = []    ;
+  var selectedLink  = ''    ;
+
+export function colorSelectdObject (prefix,id) {
+    $(prefix+id).css("stroke", "firebrick");
+  };
+
+function startVis() {
+  w = $("#svgdiv").width();
+  vis = d3.select("#svgdiv")
               .append("svg:svg")
               .attr("width", w)
               .attr("height", h)
@@ -142,20 +176,6 @@ export function normalsizeRightview() {
               .on("mouseout", function() { focus.style("display", "none"); })
               .on("mousemove", mousemove);
 */
-  var force = d3.layout.force();
-
-  var nodes = force.nodes();
-  var links = force.links();
-
-  var colorPalette = ["yellowgreen","teal","paleturquoise","peru","tomato","steelblue","lightskyblue","lightcoral"];
-  var idxColorPalette = 0 ;
-      /* Color associate with Uri */
-  var colorUriList = {} ;
-
-  var ctrlPressed = false ;
-  var selectNodes = []    ;
-  var selectLink  = ''    ;
-
   /* Definition of an event when CTRL key is actif to select several node */
   $(document).keydown(function (e) {
     if (e.keyCode == 17) {
@@ -166,12 +186,10 @@ export function normalsizeRightview() {
   $(document).keyup(function (e) {
       ctrlPressed = false ;
   });
-
-export function colorSelectdObject (prefix,id) {
-    $(prefix+id).css("stroke", "firebrick");
-  };
+}
 
 export function start () {
+    startVis();
     /* Get information about start point to bgin query */
     var startPoint = $('#startpoints').find(":selected").data("value");
     /* load abstraction */
@@ -183,22 +201,22 @@ export function start () {
     graphBuilder.setStartpoint(startPoint);
     /* first node */
     nodes.push(startPoint);
-    this.manageSelectedNodes(startPoint);
+    manageSelectedNodes(startPoint);
 
     attributesView.create(startPoint);
     /* update right view with attribute view */
     attributesView.show(startPoint);
     nodeView.show(startPoint);
     /* insert new suggestion with startpoints */
-    this.insertSuggestions();
+    insertSuggestions();
     /* build graph */
-    this.update();
-    this.colorSelectdObject("#node_",startPoint.id);
+    update();
+    colorSelectdObject("#node_",startPoint.id);
   };
 
 export function startWithQuery (dump) {
-
-    d3.select("g").selectAll("*").remove();
+    startVis();
+    vis.selectAll("*").remove();
     userAbstraction.loadUserAbstraction();
     /* initialize menus */
     menuView.start();
@@ -207,9 +225,7 @@ export function startWithQuery (dump) {
     nodes.splice(0, nodes.length);
     links.splice(0, links.length);
 
-    t = graphBuilder.setNodesAndLinksFromState(dump);
-    lnodes = t[0];
-    llinks = t[1];
+    const [lnodes, llinks] = graphBuilder.setNodesAndLinksFromState(dump);
 
     if ( lnodes.length <=0 ) return ; /* nothing to do */
 
@@ -229,15 +245,15 @@ export function startWithQuery (dump) {
     linksView.hideAll();
     /* select the last node */
     var lastn = graphBuilder.nodes()[graphBuilder.nodes().length-1];
-    this.unSelectNodes();
-    this.manageSelectedNodes(lastn);
+    unSelectNodes();
+    manageSelectedNodes(lastn);
     /* update right view with attribute view */
     attributesView.show(lastn);
     nodeView.show(lastn);
     /* insert new suggestion with startpoints */
-    this.insertSuggestions();
-    this.update();
-    this.colorSelectdObject("#node_",lastn.id);
+    insertSuggestions();
+    update();
+    colorSelectdObject("#node_",lastn.id);
   };
 
 export function updateInstanciateLinks(links) {
@@ -350,18 +366,18 @@ export function selectLink(link) {
       $('#end-marker-'+link.id).css("fill", "firebrick");
       $('#start-marker-'+link.id).css("stroke", "firebrick");
       $('#start-marker-'+link.id).css("fill", "firebrick");
-      selectLink = link;
+      selectedLink = link;
     };
 
 export function unSelectLinks() {
       $(".link").each(function (index) {
         $(this).css("stroke", "grey");
-        selectLink = '';
+        selectedLink = '';
       });
       $(".arrow").each(function (index) {
         $(this).css("stroke", "grey");
         $(this).css("fill", "grey");
-        selectLink = '';
+        selectedLink = '';
       });
     };
 
@@ -378,17 +394,19 @@ export function insertSuggestions () {
       if (selectNodes.length === 0 ) {
         return ;
       } else if (selectNodes.length === 1 ) {
-        this.insertSuggestionsWithNewNode(selectNodes[0]);
+        insertSuggestionsWithNewNode(selectNodes[0]);
       } else if (selectNodes.length === 2) {
-        this.insertSuggestionsWithTwoNodesInstancied(selectNodes[0],selectNodes[1]);
+        insertSuggestionsWithTwoNodesInstancied(selectNodes[0],selectNodes[1]);
       }
     };
 
 export function insertSuggestionsWithNewNode (slt_node) {
         /* get All suggested node and relation associated to get orientation of arc */
-        tab = userAbstraction.getRelationsObjectsAndSubjectsWithURI(slt_node.uri);
-        objectsTarget = tab[0];  /* All triplets which slt_node URI are the subject */
-        subjectsTarget = tab[1]; /* All triplets which slt_node URI are the object */
+        const [
+               objectsTarget, /* All triplets which slt_node URI are the subject */
+               subjectsTarget /* All triplets which slt_node URI are the object */
+              ]
+               = userAbstraction.getRelationsObjectsAndSubjectsWithURI(slt_node.uri);
         var link = {} ;
 
         var suggestedList = {} ;
@@ -397,7 +415,7 @@ export function insertSuggestionsWithNewNode (slt_node) {
           /* Filter if node are not desired by the user */
           if (! forceLayoutManager.isProposedUri("node",uri)) continue ;
           /* creatin node */
-          suggestedNode = userAbstraction.buildBaseNode(uri);
+          const suggestedNode = userAbstraction.buildBaseNode(uri);
           /* specific attribute for suggested node */
           graphBuilder.setSuggestedNode(suggestedNode,slt_node.x,slt_node.y);
 
@@ -437,6 +455,7 @@ export function insertSuggestionsWithNewNode (slt_node) {
           /* Filter if node are not desired by the user */
           if (! forceLayoutManager.isProposedUri("node",uri)) continue ;
 
+          let suggestedNode;
           if ( ! (uri in suggestedList) ) {
             suggestedNode = userAbstraction.buildBaseNode(uri);
             graphBuilder.setSuggestedNode(suggestedNode,slt_node.x,slt_node.y);
@@ -478,7 +497,7 @@ export function insertSuggestionsWithNewNode (slt_node) {
         // add neighbours of a node to the graph as propositions.
 
         // Manage positionnable entities
-        positionableEntities = userAbstraction.getPositionableEntities();
+        const positionableEntities = userAbstraction.getPositionableEntities();
 
         for (uri in positionableEntities) {
           // if selected node is not a positionable node, donc create a positionable
@@ -494,7 +513,7 @@ export function insertSuggestionsWithNewNode (slt_node) {
 
           if ( ! (uri in suggestedList) ) {
             /* creatin node */
-            suggestedNode = userAbstraction.buildBaseNode(uri);
+            const suggestedNode = userAbstraction.buildBaseNode(uri);
             /* specific attribute for suggested node */
             graphBuilder.setSuggestedNode(suggestedNode,slt_node.x,slt_node.y);
             /* adding in the node list to create D3.js graph */
@@ -537,16 +556,18 @@ export function relationInstancied (subj, obj,relation,links) {
 
 export function insertSuggestionsWithTwoNodesInstancied (node1, node2) {
 
-      /* get All suggested node and relation associated to get orientation of arc */
-      tab = userAbstraction.getRelationsObjectsAndSubjectsWithURI(node1.uri);
-      objectsTarget = tab[0];  /* All triplets which slt_node URI are the subject */
-      subjectsTarget = tab[1]; /* All triplets which slt_node URI are the object */
+  /* get All suggested node and relation associated to get orientation of arc */
+  const [
+         objectsTarget, /* All triplets which slt_node URI are the subject */
+         subjectsTarget /* All triplets which slt_node URI are the object */
+        ]
+         = userAbstraction.getRelationsObjectsAndSubjectsWithURI(node1.uri);
 
       for (var rel in objectsTarget[node2.uri]) {
         /* Filter if link are not desired by the user */
         if (! forceLayoutManager.isProposedUri("link",objectsTarget[node2.uri][rel])) continue ;
 
-        if ( this.relationInstancied(node1,node2,objectsTarget[node2.uri][rel],links) ) continue ;
+        if ( relationInstancied(node1,node2,objectsTarget[node2.uri][rel],links) ) continue ;
         /* increment the number of link between the two nodes */
         if ( ! (node2.id in node1.nlink) ) {
           node1.nlink[node2.id] = 0;
@@ -573,7 +594,7 @@ export function insertSuggestionsWithTwoNodesInstancied (node1, node2) {
         /* Filter if link are not desired by the user */
         if (! forceLayoutManager.isProposedUri("link",subjectsTarget[node2.uri][rel2])) continue ;
 
-        if ( this.relationInstancied(node2,node1,subjectsTarget[node2.uri][rel2],links) ) continue ;
+        if ( relationInstancied(node2,node1,subjectsTarget[node2.uri][rel2],links) ) continue ;
 
         if ( ! (node2.id in node1.nlink) ) {
           node1.nlink[node2.id] = 0;
@@ -597,7 +618,7 @@ export function insertSuggestionsWithTwoNodesInstancied (node1, node2) {
         links.push(link);
       }
       // Manage positionnable entities
-      positionableEntities = userAbstraction.getPositionableEntities();
+      const positionableEntities = userAbstraction.getPositionableEntities();
 
       if ( forceLayoutManager.isProposedUri("link","positionable") &&
            (node1.uri in positionableEntities) && (node2.uri in positionableEntities)) {
@@ -605,7 +626,7 @@ export function insertSuggestionsWithTwoNodesInstancied (node1, node2) {
         node1.nlink[node2.id]++;
         node2.nlink[node1.id]++;
 
-        link = {
+        const link = {
             suggested : true,
             positionable : true,
             uri   : 'positionable',
@@ -629,7 +650,7 @@ export function removeSuggestions() {
 
       var removeL = [];
       for (var idx in links) {
-        l = links[idx];
+        const l = links[idx];
         if ( l.suggested ) {
           removeL.push(idx);
           l.source.nlink[l.target.id]--; // decrease the number of link
@@ -651,7 +672,7 @@ export function removeSuggestions() {
         }
       }
       for (var n2=removeN.length-1;n2>=0;n2--){
-        idxn = removeN[n2];
+        const idxn = removeN[n2];
         nodes.splice(idxn,1);
       }
     } ;              /* user want a new relation contraint betwwenn two node*/
@@ -683,7 +704,7 @@ export function update () {
                 .text(function(d){return d.label;})
                 .on('click', function(d) { // Mouse down on a link label
 
-                  if (d != selectLink) { //if link is not selected
+                  if (d != selectedLink) { //if link is not selected
                     /* user want a new relation contraint betwwenn two node*/
 
                     //deselect all nodes and links
@@ -694,7 +715,7 @@ export function update () {
                     forceLayoutManager.selectLink(d);
 
                     if ( d.suggested ) {
-                      ll = [d];
+                      const ll = [d];
                       graphBuilder.instanciateLink(ll);
                       forceLayoutManager.updateInstanciateLinks(ll);
                       if ( d.source.suggested || d.target.suggested  ) {
@@ -904,10 +925,10 @@ export function update () {
               XS = -dim  ;
               YS = -dim  ;
             }
-            Xsource = d.source.x + XS;
-            Ysource = d.source.y + YS;
-            Xtarget = d.target.x + XT;
-            Ytarget = d.target.y + YT;
+            const Xsource = d.source.x + XS;
+            const Ysource = d.source.y + YS;
+            const Xtarget = d.target.x + XT;
+            const Ytarget = d.target.y + YT;
             /* Manage a line if weigth = 1 */
             if ( nlinks <= 1 ) {
               return "M" + Xsource + "," + Ysource + "L" + Xtarget + "," + Ytarget  ;

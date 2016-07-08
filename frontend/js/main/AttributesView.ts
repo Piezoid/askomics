@@ -1,5 +1,10 @@
 /*jshint esversion: 6 */
 
+import * as graphBuilder from './GraphBuilder';
+import * as userAbstraction from './UserAbstraction';
+import RestServiceJs from '../utils/RestManagement';
+import { displayModal, hideModal } from '../utils/Modal';
+
 /*
   Manage The creation, update and deletaion inside the Attributes Graph view
 */
@@ -18,7 +23,7 @@ export function hide (node) {
     $("#"+prefix+node.SPARQLid).hide();
   };
 
-export function hideAll (node) {
+export function hideAll () {
     $("div[id*='"+ prefix +"']" ).hide();
   };
 
@@ -41,30 +46,25 @@ export function create (node) {
       var nameLab = $("<label></label>").attr("for",elemId).text("ID");
       var nameInp = $("<input/>").attr("id", "lab_" + elemId).addClass("form-control");
       var removeIcon = $('<span class="glyphicon glyphicon-remove display"></span>');
-      removeIcon.click(function() { field.val(null).trigger("change"); });
 
       details.append(nameLab).append(makeRemoveIcon(nameInp)).append(nameInp);
 
       nameInp.change(function(d) {
         var value = $(this).val();
-        nodeid = $(this).parent().attr('nodeid');
-        sparlid = $(this).parent().attr('sparqlid');
+        const nodeid = $(this).parent().attr('nodeid');
+        const sparlid = $(this).parent().attr('sparqlid');
 
         graphBuilder.setFilterAttributes(nodeid,sparlid,value,'FILTER ( regex(str(?'+sparlid+'), "'+$(this).val()+'", "i" ))');
       });
 
 
-      attributes = userAbstraction.getAttributesWithURI(node.uri);
+      let attributes = userAbstraction.getAttributesWithURI(node.uri);
 
       $.each(attributes, function(i) {
           /* if attribute is loaded before the creation of attribute view, we don t need to create a new */
-          attribute = graphBuilder.getAttributeOrCategoryForNode(attributes[i],node);
-
+          let attribute = graphBuilder.getAttributeOrCategoryForNode(attributes[i],node) ||
           /* creation of new one otherwise */
-          if ( ! attribute ) {
-            attribute = graphBuilder.buildAttributeOrCategoryForNode(attributes[i],node);
-
-          }
+                          graphBuilder.buildAttributeOrCategoryForNode(attributes[i],node);
 
           var id = attribute.id;
 
@@ -118,8 +118,8 @@ export function create (node) {
               inp.change(function(d) {
                 var value = $(this).val();
                 if (value === null) value = '';
-                nodeid = $(this).parent().attr('nodeid');
-                sparlid = $(this).attr('sparqlid');
+                const nodeid = $(this).parent().attr('nodeid');
+                const sparlid = $(this).attr('sparqlid');
 
                 //graphBuilder.setFilterAttributes(nodeid,sparlid,value,'FILTER ( ?'+sparlid+'="'+value[0]+'"^^xsd:string)');
                 var listValue = "";
@@ -131,8 +131,8 @@ export function create (node) {
 
           } else {
               if (attribute.type.indexOf("decimal") >= 0) {
-                inputValue="";
-                selectedOpValue="";
+                let inputValue="";
+                let selectedOpValue="";
                 inp = $("<table></table>").attr("sparqlid",labelSparqlVarId);
                 if ('op_'+labelSparqlVarId in node.values) {
                   selectedOpValue = node.values['op_'+labelSparqlVarId];
@@ -141,7 +141,7 @@ export function create (node) {
                   inputValue = node.values[labelSparqlVarId];
                 }
 
-                v = $("<select></select>").addClass("form-control");
+                let v = $("<select></select>").addClass("form-control");
                 var t;
                 t=$("<option></option>").attr("value", '=').append('=');
                 if ( selectedOpValue=='=') t.attr("selected", "selected");
@@ -162,7 +162,7 @@ export function create (node) {
                 if ( selectedOpValue=='!=') t.attr("selected", "selected");
                 v.append(t);
 
-                tr = $("<tr></tr>");
+                const tr = $("<tr></tr>");
                 tr.append($("<td></td>").append(v));
                 //v = $("<input/>").attr("type", "text").val(inputValue).addClass("form-control");
                 v = $('<input type="text" class="form-control"/>').attr("id",id); // ?????????????????
@@ -174,15 +174,15 @@ export function create (node) {
                 inp.change(function(d) {
                   var op = $(this).find("option:selected").text();
                   var value = $(this).find('input').val();
-                  nodeid = $(this).parent().attr('nodeid');
-                  sparlid = $(this).attr('sparqlid');
+                  const nodeid = $(this).parent().attr('nodeid');
+                  const sparlid = $(this).attr('sparqlid');
 
                   graphBuilder.setFilterAttributes(nodeid,sparlid,value,'FILTER ( ?'+sparlid+' '+op+' '+value+')');
                   graphBuilder.setFilterAttributes(nodeid,"op_"+sparlid,op,'');
                 });
 
               } else {
-                inputValue = "";
+                let inputValue = "";
                 if (labelSparqlVarId in node.values) {
                   inputValue = node.values[labelSparqlVarId];
                 }
@@ -190,8 +190,8 @@ export function create (node) {
                 inp = $("<input/>").attr("sparqlid",labelSparqlVarId).attr("type", "text").val(inputValue).addClass("form-control");
                 inp.change(function(d) {
                   var value = $(this).val();
-                  nodeid = $(this).parent().attr('nodeid');
-                  sparlid = $(this).attr('sparqlid');
+                  const nodeid = $(this).parent().attr('nodeid');
+                  const sparlid = $(this).attr('sparqlid');
                   graphBuilder.setFilterAttributes(nodeid,sparlid,value,'FILTER ( regex(str(?'+sparlid+'), "'+$(this).val()+'", "i" ))');
                 });
               }

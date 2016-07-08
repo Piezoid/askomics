@@ -1,5 +1,7 @@
 /*jshint esversion: 6 */
-
+import * as nodeView from './NodeView';
+import * as linksView from './LinksView';
+import * as forceLayoutManager from './ForceLayoutManager';
 /*
   Manage Information Link View With a current selected link
 */
@@ -18,7 +20,7 @@ export function showTitle (link) {
   };
 
 export function show (link) {
-    this.showTitle(link);
+    showTitle(link);
     $("#"+prefix+"Link-"+link.id).show();
   };
 
@@ -26,7 +28,7 @@ export function hide (link) {
     $("#"+prefix+"Link-"+link.id).hide();
   };
 
-export function hideAll (link) {
+export function hideAll () {
     $("div[id*='"+ prefix +"']" ).hide();
   };
 
@@ -112,7 +114,7 @@ export function createStandardView (link) {
     var elemUri = link.uri,
          nameDiv = prefix+"Link-"+id_link ;
 
-    this.showTitle(link);
+    showTitle(link);
     var details = $("<div></div>").attr("id",nameDiv)
                                   .addClass('div-details')
                                   .append("No filter available");
@@ -127,7 +129,7 @@ export function createPosistionableView (link) {
     var elemUri = link.uri,
          nameDiv = prefix+"Link-"+id_link ;
 
-    this.showTitle(link);
+    showTitle(link);
 
     var details = $("<div></div>").attr("id",nameDiv).addClass('div-details');
     //console.log(JSON.stringify(link.target));
@@ -191,40 +193,38 @@ export function createPosistionableView (link) {
            .append($('<hr>'))
            .append(strict);
 
-    lv = this;
-
     select.change(function() {
       value = select.val();
-      lv.changeType(link, value);
+      changeType(link, value);
     });
 
     checkbox_sameref.change(function() {
       if ($('#ref-'+id_link).is(':checked')) {
-        lv.changeSameRef(link, true);
+        changeSameRef(link, true);
       }else{
-        lv.changeSameRef(link, false);
+        changeSameRef(link, false);
       }
     });
 
     checkbox_sametax.change(function() {
       if($('#tax-'+id_link).is(':checked')) {
-        lv.changeSameTax(link, true);
+        changeSameTax(link, true);
       }else{
-        lv.changeSameTax(link, false);
+        changeSameTax(link, false);
       }
     });
 
     strict.change(function() {
       if($('#strict-'+id_link).is(':checked')) {
-        lv.changeStrict(link, true);
+        changeStrict(link, true);
       }else{
-        lv.changeStrict(link, false);
+        changeStrict(link, false);
       }
     });
 
     reverseArrow.click(function() {
       console.log('---> ReverseDir');
-      lv.reverseDir(link);
+      reverseDir(link);
     });
 
     $("#viewDetails").append(details);

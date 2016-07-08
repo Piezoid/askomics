@@ -1,4 +1,10 @@
 /*jshint esversion: 6 */
+import { displayModal } from '../utils/Modal';
+
+import * as graphBuilder from './GraphBuilder';
+import * as attributesView from './AttributesView';
+import * as linksView from './LinksView';
+import * as forceLayoutManager from './ForceLayoutManager';
 
 /*
   Manage Information Node View With a current selected node
@@ -28,7 +34,7 @@
           forceLayoutManager.removeSuggestions();
           forceLayoutManager.update();
           attributesView.remove(node);
-          nodeView.clean();
+          clean();
           for (var l of listLinksRemoved) {
             linksView.remove(l);
           }
@@ -106,9 +112,9 @@ export function show (node) {
       throw new Error("AskomicsNodeView.prototype.set : node is undefined !");
     }
 
-    this.clean();
+    clean();
 
-    $("#objectName").html(this.formatLabelEntity(node));
+    $("#objectName").html(formatLabelEntity(node));
     $("#showNode").show();
     $("#deleteNode").show();
     if ( node.actif ) {
@@ -122,17 +128,17 @@ export function show (node) {
 
 export function remove (node) {
     //$("#"+prefix+node.SPARQLid).remove();
-    this.clean();
+    clean();
   };
 
 export function hide (node) {
     //$("#"+prefix+node.SPARQLid).hide();
-    this.clean();
+    clean();
   };
 
-export function hideAll (node) {
+export function hideAll () {
     //$("div[id*='"+ prefix +"']" ).hide();
-    this.clean();
+    clean();
   };
 
 export function create (node) {

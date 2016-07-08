@@ -1,6 +1,13 @@
 /*jshint esversion: 6 */
 
-function prepareQuery(exp, lim, roq) {
+import * as graphBuilder from './GraphBuilder';
+import * as forceLayoutManager from './ForceLayoutManager';
+import * as nodeView from './NodeView';
+
+import { displayModal, hideModal } from '../utils/Modal';
+import RestServiceJs from '../utils/RestManagement';
+
+export function prepareQuery(exp, lim, roq) {
     //     Get JSON to ask for a SPARQL query corresponding to the graph
     //     and launch it according to given parameters.
     //
@@ -18,7 +25,7 @@ function prepareQuery(exp, lim, roq) {
            };
 }
 
-function viewQueryResults() {
+export function viewQueryResults() {
     $("#btn-down").prop("disabled", false);
     displayModal('Please wait', '', 'Close');
 
@@ -38,7 +45,7 @@ function viewQueryResults() {
     });
 }
 
-function downloadResultsFile(lim) {
+export function downloadResultsFile(lim) {
     displayModal('Generating results file ...', '', 'Close');
     var service = new RestServiceJs("sparqlquery");
     var jdata = prepareQuery(true, lim, false);
@@ -48,7 +55,7 @@ function downloadResultsFile(lim) {
     });
 }
 
-function displayResults(data) {
+export function displayResults(data) {
     // to clear and print new results
     $("#results").empty();
     if (data.values.length > 0) {
@@ -95,7 +102,7 @@ function displayResults(data) {
 
       for (i=0;i<data.values.length;i++ ) {
         row = $('<tr></tr>');
-        for (j=0;j<nodeToDisplay.length;j++ ) {
+        for (let j=0;j<nodeToDisplay.length;j++ ) {
           varEntity = nodeToDisplay[j];
           //console.log(JSON.stringify(data.values[i]));
           row.append($('<td></td>').addClass("table-bordered").text(data.values[i][varEntity]));

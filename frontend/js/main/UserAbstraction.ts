@@ -1,5 +1,7 @@
 /*jshint esversion: 6 */
 
+import RestServiceJs from '../utils/RestManagement';
+
 /*
   CLASSE AskomicsUserAbstraction
   Manage Abstraction storing in the TPS.
