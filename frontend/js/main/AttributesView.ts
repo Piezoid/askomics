@@ -4,8 +4,6 @@
   Manage The creation, update and deletaion inside the Attributes Graph view
 */
 
-var AskomicsAttributesView = function () {
-
   var prefix = "rightview_"; /* TODO : This prefix have to be the same as Link view otherwise !!!!!!!!!!! */
 
 export function remove (node) {
@@ -67,7 +65,7 @@ export function create (node) {
             attribute = graphBuilder.buildAttributeOrCategoryForNode(attributes[i],node);
 
           }
-          
+
           var id = attribute.id;
 
           var lab = $("<label></label>").attr("for",attribute.label).text(attribute.label);
@@ -230,4 +228,3 @@ export function create (node) {
       });
       $("#viewDetails").append(details);
   };
-};

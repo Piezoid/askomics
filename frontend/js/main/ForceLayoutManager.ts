@@ -2,8 +2,6 @@
 
 /*
 */
-var AskomicsForceLayoutManager = function () {
-
   var w = $("#svgdiv").width();
   var h = 350 ;
   var configDisplay = {
@@ -946,4 +944,3 @@ export function update () {
           .size([w, h])
           .start();
   };
-};

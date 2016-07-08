@@ -3,7 +3,6 @@
 /*
   Manage Menu View to select and unselect proposition of element/link
 */
-var AskomicsMenuView = function () {
 
 export function buildLiView(uri,label,submenu) {
 
@@ -151,4 +150,3 @@ export function start(node) {
       //hide by default
       $("#viewListNodesAndLinks").hide();
   } ;
-};

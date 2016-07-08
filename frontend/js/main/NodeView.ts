@@ -3,10 +3,7 @@
 /*
   Manage Information Node View With a current selected node
 */
-var AskomicsNodeView = function () {
-  //var prefix = "nodeview_";
 
-  {
     // Switch between close and open eye icon for unselected
     $("#showNode").click(function() {
         var sparqlId = $("#objectName").text();
@@ -84,7 +81,6 @@ var AskomicsNodeView = function () {
           displayModal(help_title, help_str, 'ok');
         }
     })
-  }
 
   // take a string and return an entity with a sub index
 export function formatLabelEntity(node) {
@@ -142,4 +138,3 @@ export function hideAll (node) {
 export function create (node) {
   //  var nodeView = $("<div></div>").attr("id",prefix+node.SPARQLid);
   };
-};

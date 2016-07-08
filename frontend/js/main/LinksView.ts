@@ -3,7 +3,6 @@
 /*
   Manage Information Link View With a current selected link
 */
-var AskomicsLinksView = function () {
   var prefix = "rightview_";
   var arrowCode = "&#8594;";
 
@@ -242,4 +241,3 @@ export function selectListLinksUser(links,node) {
       }
     }
   };
-};

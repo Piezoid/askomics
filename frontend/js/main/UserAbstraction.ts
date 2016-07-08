@@ -4,8 +4,6 @@
   CLASSE AskomicsUserAbstraction
   Manage Abstraction storing in the TPS.
 */
-var AskomicsUserAbstraction = function () {
-    'use strict';
     const prefix = {
       'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
       'xsd': 'http://www.w3.org/2001/XMLSchema#',
@@ -201,5 +199,3 @@ export function getAttributesWithURI(UriSelectedNode) {
 export function isPositionable(Uri) {
       return (Uri in entityPositionableInformationList);
     };
-
-  };

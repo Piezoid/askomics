@@ -1,4 +1,4 @@
-function RestServiceJs(newurl) {
+export default function RestServiceJs(newurl) {
   this.myurl = location.pathname + newurl;
 
   this.post = function(model, callback) {

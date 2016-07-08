@@ -3,7 +3,6 @@
 /*
   Manage Menu View to select and unselect proposition of element/link
 */
-var AskomicsMenuFile = function () {
 
 export function start() {
 
@@ -26,5 +25,3 @@ export function start() {
       $(this).attr("href", "data:application/sparql-query," + encodeURIComponent(query)).attr("download", "query-" + date + ".sparql");
     });
   };
-
-};

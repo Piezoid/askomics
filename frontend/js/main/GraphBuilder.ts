@@ -1,7 +1,5 @@
 /*jshint esversion: 6 */
 
-/* constructeur de AskomicsGraphBuilder */
-  var AskomicsGraphBuilder = function () {
     var AskomicsGraphBuilderVersion = 1.0           ;
     /* ========================================= ATTRIBUTES ============================================= */
     var SPARQLIDgeneration = {} ; /* { <ENT1> : 5, ... }  last index used to named variable */
@@ -27,7 +25,7 @@ export function getInternalState() {
 export function setNodesAndLinksFromState(dump) {
       try {
         var struct = JSON.parse(dump);
-        
+
         var versionOfFile    = struct[0];
         _instanciedNodeGraph = struct[1];
         _instanciedLinkGraph = struct[2];
@@ -632,5 +630,3 @@ export function attributesDisplaying(SPARQLid) {
         node.values[SPARQLid] = value; /* save value to restore it when the views need it*/
       }
     };
-
-  };
