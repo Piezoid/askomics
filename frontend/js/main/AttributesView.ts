@@ -8,25 +8,25 @@ var AskomicsAttributesView = function () {
 
   var prefix = "rightview_"; /* TODO : This prefix have to be the same as Link view otherwise !!!!!!!!!!! */
 
-  AskomicsAttributesView.prototype.remove = function (node) {
+export function remove (node) {
     $("#"+prefix+node.SPARQLid).remove();
   };
 
-  AskomicsAttributesView.prototype.show = function (node) {
+export function show (node) {
     $("#"+prefix+node.SPARQLid).show();
   };
 
-  AskomicsAttributesView.prototype.hide = function (node) {
+export function hide (node) {
     $("#"+prefix+node.SPARQLid).hide();
   };
 
-  AskomicsAttributesView.prototype.hideAll = function (node) {
+export function hideAll (node) {
     $("div[id*='"+ prefix +"']" ).hide();
   };
 
 
 
-  AskomicsAttributesView.prototype.create = function (node) {
+export function create (node) {
       // Add attributes of the selected node on the right side of AskOmics
     function makeRemoveIcon(field) {
           var removeIcon = $('<span class="glyphicon glyphicon-erase display"></span>');

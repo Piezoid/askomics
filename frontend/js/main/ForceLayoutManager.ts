@@ -15,7 +15,7 @@ var AskomicsForceLayoutManager = function () {
   var _hideProposedUriNode    = [] ;
   var _hideProposedUriLink    = [] ;
 
-  AskomicsForceLayoutManager.prototype.getArrayForProposedUri = function(type) {
+export function getArrayForProposedUri(type) {
     if ( type == "node" ) {
       return _hideProposedUriNode;
     }
@@ -25,7 +25,7 @@ var AskomicsForceLayoutManager = function () {
     throw new Error("AskomicsForceLayoutManager.prototype.getArrayForProposedUri Devel error => type !=node and link :"+type+" uri:"+uri);
   };
 
-  AskomicsForceLayoutManager.prototype.offProposedUri = function(type,uri) {
+export function offProposedUri(type,uri) {
 
     tab = this.getArrayForProposedUri(type);
 
@@ -35,7 +35,7 @@ var AskomicsForceLayoutManager = function () {
     tab.push(uri);
   };
 
-  AskomicsForceLayoutManager.prototype.onProposedUri = function(type,uri) {
+export function onProposedUri(type,uri) {
 
     tab = this.getArrayForProposedUri(type);
 
@@ -47,7 +47,7 @@ var AskomicsForceLayoutManager = function () {
     }
   };
 
-  AskomicsForceLayoutManager.prototype.isProposedUri = function(type,uri) {
+export function isProposedUri(type,uri) {
 
     tab = this.getArrayForProposedUri(type);
 
@@ -59,7 +59,7 @@ var AskomicsForceLayoutManager = function () {
     return true;
   };
 
-  AskomicsForceLayoutManager.prototype.fullsizeGraph = function() {
+export function fullsizeGraph() {
     $('#viewDetails').hide();
     $('#results').hide();
     $('#graph').attr('class', 'col-md-12');
@@ -71,7 +71,7 @@ var AskomicsForceLayoutManager = function () {
     $('#icon-resize-graph').attr('value', 'full');
   };
 
-  AskomicsForceLayoutManager.prototype.normalsizeGraph = function() {
+export function normalsizeGraph() {
     $('#viewDetails').show();
     $('#results').show();
     $('#graph').attr('class', 'col-md-6');
@@ -83,7 +83,7 @@ var AskomicsForceLayoutManager = function () {
     $('#icon-resize-graph').attr('value', 'small');
   };
 
-  AskomicsForceLayoutManager.prototype.fullsizeRightview = function() {
+export function fullsizeRightview() {
     $('#graph').hide();
     $('#results').hide();
     $('#viewDetails').attr('class', 'col-md-12');
@@ -94,7 +94,7 @@ var AskomicsForceLayoutManager = function () {
     $('#icon-resize-attr').attr('value', 'full');
   };
 
-  AskomicsForceLayoutManager.prototype.normalsizeRightview = function() {
+export function normalsizeRightview() {
     $('#graph').show();
     $('#results').show();
     $('#viewDetails').attr('class', 'col-md-6');
@@ -169,11 +169,11 @@ var AskomicsForceLayoutManager = function () {
       ctrlPressed = false ;
   });
 
-  AskomicsForceLayoutManager.prototype.colorSelectdObject = function (prefix,id) {
+export function colorSelectdObject (prefix,id) {
     $(prefix+id).css("stroke", "firebrick");
   };
 
-  AskomicsForceLayoutManager.prototype.start = function () {
+export function start () {
     /* Get information about start point to bgin query */
     var startPoint = $('#startpoints').find(":selected").data("value");
     /* load abstraction */
@@ -198,7 +198,7 @@ var AskomicsForceLayoutManager = function () {
     this.colorSelectdObject("#node_",startPoint.id);
   };
 
-  AskomicsForceLayoutManager.prototype.startWithQuery = function (dump) {
+export function startWithQuery (dump) {
 
     d3.select("g").selectAll("*").remove();
     userAbstraction.loadUserAbstraction();
@@ -242,7 +242,7 @@ var AskomicsForceLayoutManager = function () {
     this.colorSelectdObject("#node_",lastn.id);
   };
 
-    AskomicsForceLayoutManager.prototype.updateInstanciateLinks = function(links) {
+export function updateInstanciateLinks(links) {
       console.log('updateInstanciateLinks size:'+links.length);
       for (var l of links) {
         var id = l.id;
@@ -253,7 +253,7 @@ var AskomicsForceLayoutManager = function () {
       }
     };
 
-    AskomicsForceLayoutManager.prototype.getColorInstanciatedNode = function(node) {
+export function getColorInstanciatedNode(node) {
       if ( ! node  ) {
         throw new Error("AskomicsForceLayoutManager.prototype.getColorInstanciatedNode node is not defined!");
       }
@@ -272,7 +272,7 @@ var AskomicsForceLayoutManager = function () {
       return colorUriList[node.uri];
     };
     /* //not used anymore
-    AskomicsForceLayoutManager.prototype.getStrokeColorInstanciatedNode = function(node) {
+export function getStrokeColorInstanciatedNode(node) {
       if ( ! node  ) {
         throw new Error("AskomicsForceLayoutManager.prototype.getStrokeColorInstanciatedNode node is not defined!");
       }
@@ -286,7 +286,7 @@ var AskomicsForceLayoutManager = function () {
     */
 
     /* Update the label of cercle when a node is instanciated */
-    AskomicsForceLayoutManager.prototype.updateInstanciatedNode = function(node) {
+export function updateInstanciatedNode(node) {
 
       if ( ! node  )
         throw new Error("AskomicsForceLayoutManager.prototype.updateInstanciateNode : node is not defined !");
@@ -299,7 +299,7 @@ var AskomicsForceLayoutManager = function () {
     };
 
     /* Update the label of cercle when a node is instanciated */
-    AskomicsForceLayoutManager.prototype.manageSelectedNodes = function(node) {
+export function manageSelectedNodes(node) {
 
       if (! ctrlPressed) {
         $("[id*='node_']").each(function (index, value) {
@@ -339,14 +339,14 @@ var AskomicsForceLayoutManager = function () {
     };
 
     /* unselect all nodes */
-    AskomicsForceLayoutManager.prototype.unSelectNodes = function() {
+export function unSelectNodes() {
       selectNodes = [];
       $("[id*='node_']").each(function (index, value) {
         $(this).css("stroke", "grey");
       });
     };
 
-    AskomicsForceLayoutManager.prototype.selectLink = function(link) {
+export function selectLink(link) {
       $("#"+link.id).css("stroke", "firebrick");
       $('#end-marker-'+link.id).css("stroke", "firebrick");
       $('#end-marker-'+link.id).css("fill", "firebrick");
@@ -355,7 +355,7 @@ var AskomicsForceLayoutManager = function () {
       selectLink = link;
     };
 
-    AskomicsForceLayoutManager.prototype.unSelectLinks = function() {
+export function unSelectLinks() {
       $(".link").each(function (index) {
         $(this).css("stroke", "grey");
         selectLink = '';
@@ -367,7 +367,7 @@ var AskomicsForceLayoutManager = function () {
       });
     };
 
-    AskomicsForceLayoutManager.prototype.nodeIsSelected = function(node) {
+export function nodeIsSelected(node) {
       if (selectNodes.length > 1) {
         for (var i of selectNodes) {
           if ( node.id == i.id ) return true;
@@ -376,7 +376,7 @@ var AskomicsForceLayoutManager = function () {
       return false;
     };
 
-    AskomicsForceLayoutManager.prototype.insertSuggestions = function () {
+export function insertSuggestions () {
       if (selectNodes.length === 0 ) {
         return ;
       } else if (selectNodes.length === 1 ) {
@@ -386,7 +386,7 @@ var AskomicsForceLayoutManager = function () {
       }
     };
 
-    AskomicsForceLayoutManager.prototype.insertSuggestionsWithNewNode = function (slt_node) {
+export function insertSuggestionsWithNewNode (slt_node) {
         /* get All suggested node and relation associated to get orientation of arc */
         tab = userAbstraction.getRelationsObjectsAndSubjectsWithURI(slt_node.uri);
         objectsTarget = tab[0];  /* All triplets which slt_node URI are the subject */
@@ -530,14 +530,14 @@ var AskomicsForceLayoutManager = function () {
 
     } ;
 
-    AskomicsForceLayoutManager.prototype.relationInstancied = function (subj, obj,relation,links) {
+export function relationInstancied (subj, obj,relation,links) {
       for ( var rel of links ) {
         if ( rel.source == subj && rel.target == obj && rel.uri == relation ) return true;
       }
       return false;
     };
 
-    AskomicsForceLayoutManager.prototype.insertSuggestionsWithTwoNodesInstancied = function (node1, node2) {
+export function insertSuggestionsWithTwoNodesInstancied (node1, node2) {
 
       /* get All suggested node and relation associated to get orientation of arc */
       tab = userAbstraction.getRelationsObjectsAndSubjectsWithURI(node1.uri);
@@ -627,7 +627,7 @@ var AskomicsForceLayoutManager = function () {
     };
 
     /* Remove all nodes and links suggestion */
-    AskomicsForceLayoutManager.prototype.removeSuggestions = function() {
+export function removeSuggestions() {
 
       var removeL = [];
       for (var idx in links) {
@@ -659,7 +659,7 @@ var AskomicsForceLayoutManager = function () {
     } ;              /* user want a new relation contraint betwwenn two node*/
 
 
-  AskomicsForceLayoutManager.prototype.update = function () {
+export function update () {
     console.log('---> update graph!');
 
     var link = vis.selectAll(".link")

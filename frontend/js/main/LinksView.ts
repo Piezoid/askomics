@@ -7,31 +7,31 @@ var AskomicsLinksView = function () {
   var prefix = "rightview_";
   var arrowCode = "&#8594;";
 
-  AskomicsLinksView.prototype.remove = function (link) {
+export function remove (link) {
     $("#"+prefix+"Link-"+link.id).remove();
   };
 
-  AskomicsLinksView.prototype.showTitle = function (link) {
+export function showTitle (link) {
 
     nodeView.clean();
     $("#objectName").text(link.label);
 
   };
 
-  AskomicsLinksView.prototype.show = function (link) {
+export function show (link) {
     this.showTitle(link);
     $("#"+prefix+"Link-"+link.id).show();
   };
 
-  AskomicsLinksView.prototype.hide = function (link) {
+export function hide (link) {
     $("#"+prefix+"Link-"+link.id).hide();
   };
 
-  AskomicsLinksView.prototype.hideAll = function (link) {
+export function hideAll (link) {
     $("div[id*='"+ prefix +"']" ).hide();
   };
 
-  AskomicsLinksView.prototype.changeType = function(link, type) {
+export function changeType(link, type) {
 
     // remove link
     var id = link.id;
@@ -59,7 +59,7 @@ var AskomicsLinksView = function () {
     forceLayoutManager.selectLink(link);
   };
 
-  AskomicsLinksView.prototype.reverseDir = function(link) {
+export function reverseDir(link) {
 
     // remove rightview
     linksView.remove(link);
@@ -86,19 +86,19 @@ var AskomicsLinksView = function () {
     forceLayoutManager.selectLink(link);
   };
 
-  AskomicsLinksView.prototype.changeStrict = function(link, strict) {
+export function changeStrict(link, strict) {
     link.strict = strict;
   };
 
-  AskomicsLinksView.prototype.changeSameTax = function(link, same_tax) {
+export function changeSameTax(link, same_tax) {
     link.sameTax = same_tax;
   };
 
-  AskomicsLinksView.prototype.changeSameRef = function(link, same_ref) {
+export function changeSameRef(link, same_ref) {
     link.sameRef = same_ref;
   };
 
-  AskomicsLinksView.prototype.create = function (link) {
+export function create (link) {
     if(link.positionable){
       linksView.createPosistionableView(link);
     }else{
@@ -106,7 +106,7 @@ var AskomicsLinksView = function () {
     }
   };
 
-  AskomicsLinksView.prototype.createStandardView = function (link) {
+export function createStandardView (link) {
 
     var id_link = link.id;
 
@@ -121,7 +121,7 @@ var AskomicsLinksView = function () {
     $("#viewDetails").append(details);
   };
 
-  AskomicsLinksView.prototype.createPosistionableView = function (link) {
+export function createPosistionableView (link) {
 
     var id_link = link.id;
 
@@ -232,7 +232,7 @@ var AskomicsLinksView = function () {
   };
 
   // take a string and return an entity with a sub index
-  AskomicsLinksView.prototype.selectListLinksUser = function(links,node) {
+export function selectListLinksUser(links,node) {
     /* fix the first link associted with the new instanciate node TODO: propose an interface to select the link */
     for (var il in links) {
       var l = links[il];

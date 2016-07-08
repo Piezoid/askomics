@@ -11,20 +11,20 @@
     var _instanciedNodeGraph = [] ;
     var _instanciedLinkGraph = [] ;
 
-    AskomicsGraphBuilder.prototype.nodes = function() {
+export function nodes() {
       return _instanciedNodeGraph;
     };
 
-    AskomicsGraphBuilder.prototype.links = function() {
+export function links() {
       return _instanciedLinkGraph;
     };
     /* create a dump to store data structure and finally the query */
-    AskomicsGraphBuilder.prototype.getInternalState = function() {
+export function getInternalState() {
       return JSON.stringify([AskomicsGraphBuilderVersion,_instanciedNodeGraph,_instanciedLinkGraph,SPARQLIDgeneration,IGgeneration]);
     };
 
     /* create and return list of nodes and links to build a new grpah from a dump file */
-    AskomicsGraphBuilder.prototype.setNodesAndLinksFromState = function(dump) {
+export function setNodesAndLinksFromState(dump) {
       try {
         var struct = JSON.parse(dump);
         
@@ -59,15 +59,15 @@
       return [[],[]];
     };
 
-    AskomicsGraphBuilder.prototype.addInstanciedElt = function(node) {
+export function addInstanciedElt(node) {
       _instanciedNodeGraph.push(node);
     };
 
-    AskomicsGraphBuilder.prototype.addInstanciedLink = function(link) {
+export function addInstanciedLink(link) {
       _instanciedLinkGraph.push(link);
     };
 
-    AskomicsGraphBuilder.prototype.findElt = function(_array,id)  {
+export function findElt(_array,id)  {
       var elt  = null ;
       var indexElt = -1;
       for (var i in _array ) {
@@ -82,7 +82,7 @@
     /*
       remove a node and all node newest (and link) associated
     */
-    AskomicsGraphBuilder.prototype.removeInstanciedNode = function(node) {
+export function removeInstanciedNode(node) {
       if ( _instanciedNodeGraph[0].length <= 0 || _instanciedNodeGraph[0].id == node.id ) {
         return [];
       }
@@ -142,7 +142,7 @@
       }
       return listLinkRemoved;
     };
-    AskomicsGraphBuilder.prototype.removeInstanciedLink = function(idLink) {
+export function removeInstanciedLink(idLink) {
       // finding link
       var t = findElt(_instanciedLinkGraph,idLink);
 
@@ -171,7 +171,7 @@
     };
 
     /* create and return a new ID to instanciate a new SPARQL variate */
-    AskomicsGraphBuilder.prototype.setSPARQLVariateId = function(nodeOrLinkOrAttribute) {
+export function setSPARQLVariateId(nodeOrLinkOrAttribute) {
       lab = nodeOrLinkOrAttribute.label;
       if ( ! SPARQLIDgeneration[lab] ) {
         SPARQLIDgeneration[lab] = 0 ;
@@ -182,27 +182,27 @@
       return nodeOrLinkOrAttribute;
     };
 
-    AskomicsGraphBuilder.prototype.setId = function(node) {
+export function setId(node) {
       node.id = IGgeneration;
       IGgeneration++;
       return node;
     };
 
-    AskomicsGraphBuilder.prototype.setStartpoint = function(node) {
+export function setStartpoint(node) {
       this.setSuggestedNode(node,0,0);
       this.instanciateNode(node);
       return node;
     };
 
 
-    AskomicsGraphBuilder.prototype.getInstanciedNodeFromSparqlId = function(sparlId) {
+export function getInstanciedNodeFromSparqlId(sparlId) {
       for (var n of _instanciedNodeGraph) {
         if (n.SPARQLid === sparlId ) return n;
       }
       throw new Error("AskomicsGraphBuilder.prototype.getInstanciedNodeFromSparqlId : could not find Instanciate Node with SparqlId:"+sparlId);
     };
 
-    AskomicsGraphBuilder.prototype.getInstanciedLinkFromSparqlId = function(sparqlId) {
+export function getInstanciedLinkFromSparqlId(sparqlId) {
       for (var n of _instanciedLinkGraph) {
         if (n.label === sparqlId) return n;
       }
@@ -211,11 +211,11 @@
 
 
     /* TODO : find a best solution to unactive a node without matching on sparql variable ID */
-    AskomicsGraphBuilder.prototype.switchActiveNode = function(node) {
+export function switchActiveNode(node) {
           node.actif = !node.actif ;
     };
 
-    AskomicsGraphBuilder.prototype.setSuggestedNode = function(node,x,y) {
+export function setSuggestedNode(node,x,y) {
       node.suggested    = true;
       node.positionable = userAbstraction.isPositionable(node.uri);
       node.actif = false ;
@@ -236,11 +236,11 @@
       return node;
     };
 
-    AskomicsGraphBuilder.prototype.setPositionable = function(node) {
+export function setPositionable(node) {
       node.positionable = true;
     };
 
-    AskomicsGraphBuilder.prototype.instanciateNode = function(node) {
+export function instanciateNode(node) {
       node.suggested = false;
       node.actif = true ;
       this.setSPARQLVariateId(node);
@@ -248,7 +248,7 @@
       _instanciedNodeGraph.push(node);
     };
 
-    AskomicsGraphBuilder.prototype.isInstanciatedNode = function(node) {
+export function isInstanciatedNode(node) {
 
       for (var n of _instanciedNodeGraph) {
         if (n.id === node.id)
@@ -257,7 +257,7 @@
       return false;
     };
 
-    AskomicsGraphBuilder.prototype.instanciateLink = function(links) {
+export function instanciateLink(links) {
       for (var l of links ) {
         l.suggested = false;
         this.setSPARQLVariateId(l);
@@ -268,7 +268,7 @@
     /*
       return the name of the node without index  to set up and update the graph
     */
-    AskomicsGraphBuilder.prototype.getLabelNode = function(node) {
+export function getLabelNode(node) {
         var re = new RegExp(/(\d+)$/);
         var labelEntity = node.name.replace(re,"");
 
@@ -278,7 +278,7 @@
     /*
       return the index name of the node to set up and update the graph
     */
-    AskomicsGraphBuilder.prototype.getLabelIndexNode = function(node) {
+export function getLabelIndexNode(node) {
           var re = new RegExp(/(\d+)$/);
           var indiceEntity = node.name.match(re);
 
@@ -289,7 +289,7 @@
       };
 
     /* Build attribute with id, sparId inside a node from a generic uri attribute */
-    AskomicsGraphBuilder.prototype.setAttributeOrCategoryForNode = function(AttOrCatArray,attributeForUri,node) {
+export function setAttributeOrCategoryForNode(AttOrCatArray,attributeForUri,node) {
       AttOrCatArray[attributeForUri.uri] = {} ;
       AttOrCatArray[attributeForUri.uri].type = attributeForUri.type ;
       AttOrCatArray[attributeForUri.uri].label = attributeForUri.label ;
@@ -302,7 +302,7 @@
       return AttOrCatArray[attributeForUri.uri];
     };
 
-    AskomicsGraphBuilder.prototype.buildAttributeOrCategoryForNode = function(attributeForUri,node) {
+export function buildAttributeOrCategoryForNode(attributeForUri,node) {
       if (attributeForUri.type.indexOf("http://www.w3.org/2001/XMLSchema#") < 0) {
         return this.setAttributeOrCategoryForNode(node.categories,attributeForUri,node);
       }else {
@@ -310,7 +310,7 @@
       }
     };
 
-    AskomicsGraphBuilder.prototype.getAttributeOrCategoryForNode = function(attributeForUri,node) {
+export function getAttributeOrCategoryForNode(attributeForUri,node) {
       if (attributeForUri.uri in node.categories ) {
         return node.categories[attributeForUri.uri];
       } else if (attributeForUri.uri in node.attributes) {
@@ -319,7 +319,7 @@
       return null;
     };
 
-    AskomicsGraphBuilder.prototype.switchActiveAttribute = function(uriId,nodeId) {
+export function switchActiveAttribute(uriId,nodeId) {
       for (var node of _instanciedNodeGraph ) {
         if (node.id == nodeId ) {
           var a;
@@ -339,7 +339,7 @@
       }
     };
 
-    AskomicsGraphBuilder.prototype.synchronizeInstanciatedNodesAndLinks = function(nodes,links) {
+export function synchronizeInstanciatedNodesAndLinks(nodes,links) {
       var removeElt = [];
       var present = false;
       for ( var idn in nodes ) {
@@ -378,7 +378,7 @@
       }
     };
 
-    AskomicsGraphBuilder.prototype.buildConstraintsGraphForCategory = function(nodeAttribute,attributeId) {
+export function buildConstraintsGraphForCategory(nodeAttribute,attributeId) {
       var variates = [] ;
       var constraintRelations = [] ;
       var filters = [];
@@ -407,7 +407,7 @@
       return [variates,constraintRelations,filters] ;
     };
 
-    AskomicsGraphBuilder.prototype.buildPositionableConstraintsGraph = function(infos,source,target,constraintRelations,filters) {
+export function buildPositionableConstraintsGraph(infos,source,target,constraintRelations,filters) {
 
       var node = source ;
       var secondNode = target ;
@@ -490,7 +490,7 @@
       }
     };
 
-    AskomicsGraphBuilder.prototype.buildConstraintsGraph = function() {
+export function buildConstraintsGraph() {
       var variates = [] ;
       var constraintRelations = [] ;
       var filters = [];
@@ -588,7 +588,7 @@
       return [variates,constraintRelations,filters] ;
     };
 
-    AskomicsGraphBuilder.prototype.nodesDisplaying = function() {
+export function nodesDisplaying() {
       var list = [];
       for (var v of _instanciedNodeGraph) {
         if (v.actif)
@@ -597,7 +597,7 @@
       return list ;
     };
 
-    AskomicsGraphBuilder.prototype.attributesDisplaying = function(SPARQLid) {
+export function attributesDisplaying(SPARQLid) {
       var list = [];
       for (var v of _instanciedNodeGraph) {
         if (v.SPARQLid == SPARQLid ) {

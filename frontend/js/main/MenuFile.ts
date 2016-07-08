@@ -5,7 +5,7 @@
 */
 var AskomicsMenuFile = function () {
 
-  AskomicsMenuFile.prototype.start = function() {
+export function start() {
 
     //$("#uploadedQuery")
     $("#dwl-query").on('click', function(d) {

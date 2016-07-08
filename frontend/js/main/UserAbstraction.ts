@@ -21,15 +21,15 @@ var AskomicsUserAbstraction = function () {
     var entityPositionableInformationList = {}; /*   entityPositionableInformationList[uri1] = { taxon, ref, start, end } */
 
 
-    AskomicsUserAbstraction.prototype.getEntities = function() {
+export function getEntities() {
       return JSON.parse(JSON.stringify(Object.keys(entityInformationList))) ;
     };
 
-    AskomicsUserAbstraction.prototype.getAttributesEntity = function(uriEntity) {
+export function getAttributesEntity(uriEntity) {
       return JSON.parse(JSON.stringify(attributesEntityList[uriEntity])) ;
     };
 
-    AskomicsUserAbstraction.prototype.getPositionableEntities = function() {
+export function getPositionableEntities() {
       return JSON.parse(JSON.stringify(entityPositionableInformationList)) ;
     };
     /*
@@ -38,7 +38,7 @@ var AskomicsUserAbstraction = function () {
     */
     /* Request information in the model layer */
     //this.updateOntology();
-    AskomicsUserAbstraction.prototype.loadUserAbstraction = function() {
+export function loadUserAbstraction() {
       var service = new RestServiceJs("userAbstraction");
 
       service.postsync({}, function(resultListTripletSubjectRelationObject ) {
@@ -110,7 +110,7 @@ var AskomicsUserAbstraction = function () {
     };
 
     /* Get value of an attribut with RDF format like rdfs:label */
-    AskomicsUserAbstraction.prototype.removePrefix = function(uriEntity) {
+export function removePrefix(uriEntity) {
       if (typeof(uriEntity) !== 'string')
         throw new Error("AskomicsUserAbstraction.prototype.removePrefix: uriEntity is not a string uriEntity :"+JSON.stringify(uriEntity));
 
@@ -123,7 +123,7 @@ var AskomicsUserAbstraction = function () {
       return res;
     };
 
-    AskomicsUserAbstraction.prototype.URI = function(uriEntity) {
+export function URI(uriEntity) {
       if ( uriEntity.indexOf("#")>0 ) {
         return '<'+uriEntity+">";
       }
@@ -131,7 +131,7 @@ var AskomicsUserAbstraction = function () {
     };
 
     /* Get value of an attribut with RDF format like rdfs:label */
-    AskomicsUserAbstraction.prototype.getAttrib = function(uriEntity,attrib) {
+export function getAttrib(uriEntity,attrib) {
         if (!(uriEntity in entityInformationList)) {
           console.error(JSON.stringify(uriEntity) + " is not referenced in the user abstraction !");
           return;
@@ -153,7 +153,7 @@ var AskomicsUserAbstraction = function () {
     };
 
     /* build node from user abstraction infomation */
-    AskomicsUserAbstraction.prototype.buildBaseNode  = function(uriEntity) {
+export function buildBaseNode(uriEntity) {
       var node = {
         uri   : uriEntity,
         label : this.getAttrib(uriEntity,'rdfs:label')
@@ -169,7 +169,7 @@ var AskomicsUserAbstraction = function () {
     - Subjects link with Subject UriSelectedNode
      */
 
-    AskomicsUserAbstraction.prototype.getRelationsObjectsAndSubjectsWithURI = function(UriSelectedNode) {
+export function getRelationsObjectsAndSubjectsWithURI(UriSelectedNode) {
 
       var objectsTarget = {} ;
       var subjectsTarget = {} ;
@@ -194,11 +194,11 @@ var AskomicsUserAbstraction = function () {
     };
 
     /* return a list of attributes according a uri node */
-    AskomicsUserAbstraction.prototype.getAttributesWithURI  = function(UriSelectedNode) {
+export function getAttributesWithURI(UriSelectedNode) {
       return attributesEntityList[UriSelectedNode];
     };
 
-    AskomicsUserAbstraction.prototype.isPositionable  = function(Uri) {
+export function isPositionable(Uri) {
       return (Uri in entityPositionableInformationList);
     };
 

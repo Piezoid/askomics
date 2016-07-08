@@ -87,7 +87,7 @@ var AskomicsNodeView = function () {
   }
 
   // take a string and return an entity with a sub index
-  AskomicsNodeView.prototype.formatLabelEntity = function(node) {
+export function formatLabelEntity(node) {
     if ( node === undefined )
       throw new Error("AskomicsNodeView.prototype.formatLabelEntity : node is not defined !");
 
@@ -99,13 +99,13 @@ var AskomicsNodeView = function () {
     return $('<em></em>').text(labelEntity).append($('<sub></sub>').text(indiceEntity[0]));
   };
 
-  AskomicsNodeView.prototype.clean = function () {
+export function clean () {
     $("#objectName").text("");
     $("#showNode").hide();
     $("#deleteNode").hide();
   };
 
-  AskomicsNodeView.prototype.show = function (node) {
+export function show (node) {
     if ( node === undefined ) {
       throw new Error("AskomicsNodeView.prototype.set : node is undefined !");
     }
@@ -124,22 +124,22 @@ var AskomicsNodeView = function () {
     }
   };
 
-  AskomicsNodeView.prototype.remove = function (node) {
+export function remove (node) {
     //$("#"+prefix+node.SPARQLid).remove();
     this.clean();
   };
 
-  AskomicsNodeView.prototype.hide = function (node) {
+export function hide (node) {
     //$("#"+prefix+node.SPARQLid).hide();
     this.clean();
   };
 
-  AskomicsNodeView.prototype.hideAll = function (node) {
+export function hideAll (node) {
     //$("div[id*='"+ prefix +"']" ).hide();
     this.clean();
   };
 
-  AskomicsNodeView.prototype.create = function (node) {
+export function create (node) {
   //  var nodeView = $("<div></div>").attr("id",prefix+node.SPARQLid);
   };
 };

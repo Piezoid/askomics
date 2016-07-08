@@ -5,7 +5,7 @@
 */
 var AskomicsMenuView = function () {
 
-  AskomicsMenuView.prototype.buildLiView = function(uri,label,submenu) {
+export function buildLiView(uri,label,submenu) {
 
     var icheck = $("<span/>")
         .attr("class","glyphicon glyphicon-check");
@@ -29,7 +29,7 @@ var AskomicsMenuView = function () {
   };
 
   /* initialize the view. The abstraction have to be done */
-  AskomicsMenuView.prototype.start = function(node) {
+export function start(node) {
     menuView = this;
 
     /* to close the menu when a click event outside */
