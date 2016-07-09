@@ -26,7 +26,7 @@ import * as menuFile from './MenuFile';
   var _hideProposedUriNode    = [] ;
   var _hideProposedUriLink    = [] ;
 
-export function getArrayForProposedUri(type) {
+function getArrayForProposedUri(type, uri) {
     if ( type == "node" ) {
       return _hideProposedUriNode;
     }
@@ -38,7 +38,7 @@ export function getArrayForProposedUri(type) {
 
 export function offProposedUri(type,uri) {
 
-    const tab = getArrayForProposedUri(type);
+    const tab = getArrayForProposedUri(type, uri);
 
     for (var uriI of tab) {
       if (uriI == uri) return;
@@ -48,7 +48,7 @@ export function offProposedUri(type,uri) {
 
 export function onProposedUri(type,uri) {
 
-    const tab = getArrayForProposedUri(type);
+    const tab = getArrayForProposedUri(type, uri);
 
     for (var i in tab) {
       if (tab[i] == uri ) {
@@ -58,9 +58,9 @@ export function onProposedUri(type,uri) {
     }
   };
 
-export function isProposedUri(type,uri) {
+function isProposedUri(type,uri) {
 
-    const tab = getArrayForProposedUri(type);
+    const tab = getArrayForProposedUri(type, uri);
 
     for (var i in tab) {
       if (tab[i] == uri ) {
@@ -70,7 +70,7 @@ export function isProposedUri(type,uri) {
     return true;
   };
 
-export function fullsizeGraph() {
+function fullsizeGraph() {
     $('#viewDetails').hide();
     $('#results').hide();
     $('#graph').attr('class', 'col-md-12');
@@ -94,7 +94,7 @@ export function normalsizeGraph() {
     $('#icon-resize-graph').attr('value', 'small');
   };
 
-export function fullsizeRightview() {
+function fullsizeRightview() {
     $('#graph').hide();
     $('#results').hide();
     $('#viewDetails').attr('class', 'col-md-12');
@@ -105,7 +105,7 @@ export function fullsizeRightview() {
     $('#icon-resize-attr').attr('value', 'full');
   };
 
-export function normalsizeRightview() {
+function normalsizeRightview() {
     $('#graph').show();
     $('#results').show();
     $('#viewDetails').attr('class', 'col-md-6');
@@ -118,24 +118,24 @@ export function normalsizeRightview() {
 
   $('#full-screen-graph').click(function() {
     if ($('#icon-resize-graph').attr('value') == 'small') {
-      forceLayoutManager.fullsizeGraph();
+      fullsizeGraph();
       return;
     }
 
     if ($('#icon-resize-graph').attr('value') == 'full') {
-      forceLayoutManager.normalsizeGraph();
+      normalsizeGraph();
       return;
     }
   });
 
   $('#full-screen-attr').click(function() {
     if ($('#icon-resize-attr').attr('value') == 'small') {
-      forceLayoutManager.fullsizeRightview();
+      fullsizeRightview();
       return;
     }
 
     if ($('#icon-resize-attr').attr('value') == 'full') {
-      forceLayoutManager.normalsizeRightview();
+      normalsizeRightview();
       return;
     }
   });
@@ -155,7 +155,7 @@ export function normalsizeRightview() {
   var selectNodes = []    ;
   var selectedLink  = ''    ;
 
-export function colorSelectdObject (prefix,id) {
+function colorSelectdObject (prefix,id) {
     $(prefix+id).css("stroke", "firebrick");
   };
 
@@ -256,7 +256,7 @@ export function startWithQuery (dump) {
     colorSelectdObject("#node_",lastn.id);
   };
 
-export function updateInstanciateLinks(links) {
+function updateInstanciateLinks(links) {
       console.log('updateInstanciateLinks size:'+links.length);
       for (var l of links) {
         var id = l.id;
@@ -267,7 +267,7 @@ export function updateInstanciateLinks(links) {
       }
     };
 
-export function getColorInstanciatedNode(node) {
+function getColorInstanciatedNode(node) {
       if ( ! node  ) {
         throw new Error("AskomicsForceLayoutManager.prototype.getColorInstanciatedNode node is not defined!");
       }
@@ -300,7 +300,7 @@ export function getStrokeColorInstanciatedNode(node) {
     */
 
     /* Update the label of cercle when a node is instanciated */
-export function updateInstanciatedNode(node) {
+function updateInstanciatedNode(node) {
 
       if ( ! node  )
         throw new Error("AskomicsForceLayoutManager.prototype.updateInstanciateNode : node is not defined !");
@@ -313,7 +313,7 @@ export function updateInstanciatedNode(node) {
     };
 
     /* Update the label of cercle when a node is instanciated */
-export function manageSelectedNodes(node) {
+function manageSelectedNodes(node) {
 
       if (! ctrlPressed) {
         $("[id*='node_']").each(function (index, value) {
@@ -324,7 +324,7 @@ export function manageSelectedNodes(node) {
         if ( selectNodes.length > 1 || (selectNodes.length===0) || (selectNodes[0].id != node.id) ) {
           selectNodes = [] ;
           selectNodes.push(node);
-          forceLayoutManager.colorSelectdObject("#node_",node.id);
+          colorSelectdObject("#node_",node.id);
         } else { /* deselection of node */
           selectNodes = [] ;
           console.log('---> deselection');
@@ -342,7 +342,7 @@ export function manageSelectedNodes(node) {
           }
         }
         selectNodes.push(node);
-        forceLayoutManager.colorSelectdObject("#node_",node.id);
+        colorSelectdObject("#node_",node.id);
       }
 
       if (selectNodes.length == 0) {
@@ -353,7 +353,7 @@ export function manageSelectedNodes(node) {
     };
 
     /* unselect all nodes */
-export function unSelectNodes() {
+function unSelectNodes() {
       selectNodes = [];
       $("[id*='node_']").each(function (index, value) {
         $(this).css("stroke", "grey");
@@ -369,7 +369,7 @@ export function selectLink(link) {
       selectedLink = link;
     };
 
-export function unSelectLinks() {
+function unSelectLinks() {
       $(".link").each(function (index) {
         $(this).css("stroke", "grey");
         selectedLink = '';
@@ -381,7 +381,7 @@ export function unSelectLinks() {
       });
     };
 
-export function nodeIsSelected(node) {
+function nodeIsSelected(node) {
       if (selectNodes.length > 1) {
         for (var i of selectNodes) {
           if ( node.id == i.id ) return true;
@@ -400,7 +400,7 @@ export function insertSuggestions () {
       }
     };
 
-export function insertSuggestionsWithNewNode (slt_node) {
+function insertSuggestionsWithNewNode (slt_node) {
         /* get All suggested node and relation associated to get orientation of arc */
         const [
                objectsTarget, /* All triplets which slt_node URI are the subject */
@@ -413,7 +413,7 @@ export function insertSuggestionsWithNewNode (slt_node) {
 
         for (var uri in objectsTarget ) {
           /* Filter if node are not desired by the user */
-          if (! forceLayoutManager.isProposedUri("node",uri)) continue ;
+          if (! isProposedUri("node",uri)) continue ;
           /* creatin node */
           const suggestedNode = userAbstraction.buildBaseNode(uri);
           /* specific attribute for suggested node */
@@ -421,7 +421,7 @@ export function insertSuggestionsWithNewNode (slt_node) {
 
           for (var rel in objectsTarget[uri]) {
             /* Filter if link are not desired by the user */
-            if (! forceLayoutManager.isProposedUri("link",objectsTarget[uri][rel])) continue ;
+            if (! isProposedUri("link",objectsTarget[uri][rel])) continue ;
 
             /* adding in the node list to create D3.js graph */
             if ( ! (suggestedNode.id in slt_node.nlink) ) {
@@ -453,7 +453,7 @@ export function insertSuggestionsWithNewNode (slt_node) {
 
         for (uri in subjectsTarget ) {
           /* Filter if node are not desired by the user */
-          if (! forceLayoutManager.isProposedUri("node",uri)) continue ;
+          if (! isProposedUri("node",uri)) continue ;
 
           let suggestedNode;
           if ( ! (uri in suggestedList) ) {
@@ -463,7 +463,7 @@ export function insertSuggestionsWithNewNode (slt_node) {
 
           for (var rel2 in subjectsTarget[uri]) {
             /* Filter if link are not desired by the user */
-            if (! forceLayoutManager.isProposedUri("link",subjectsTarget[uri][rel2])) continue ;
+            if (! isProposedUri("link",subjectsTarget[uri][rel2])) continue ;
 
             /* adding in the node list to create D3.js graph */
             if ( ! (suggestedNode.id in slt_node.nlink) ) {
@@ -504,9 +504,9 @@ export function insertSuggestionsWithNewNode (slt_node) {
           // link with an other positionable node
           if (! (slt_node.uri in positionableEntities)) continue;
           /* Filter if node are not desired by the user */
-          if (! forceLayoutManager.isProposedUri("node",uri)) continue ;
+          if (! isProposedUri("node",uri)) continue ;
           /* Filter if link are not desired by the user */
-          if (! forceLayoutManager.isProposedUri("link","positionable")) continue ;
+          if (! isProposedUri("link","positionable")) continue ;
 
           /* uncomment if we don't want a positionable relation between the same node  */
           //if ( uri == slt_node.uri ) continue ;
@@ -547,14 +547,14 @@ export function insertSuggestionsWithNewNode (slt_node) {
 
     } ;
 
-export function relationInstancied (subj, obj,relation,links) {
+function relationInstancied (subj, obj,relation,links) {
       for ( var rel of links ) {
         if ( rel.source == subj && rel.target == obj && rel.uri == relation ) return true;
       }
       return false;
     };
 
-export function insertSuggestionsWithTwoNodesInstancied (node1, node2) {
+function insertSuggestionsWithTwoNodesInstancied (node1, node2) {
 
   /* get All suggested node and relation associated to get orientation of arc */
   const [
@@ -565,7 +565,7 @@ export function insertSuggestionsWithTwoNodesInstancied (node1, node2) {
 
       for (var rel in objectsTarget[node2.uri]) {
         /* Filter if link are not desired by the user */
-        if (! forceLayoutManager.isProposedUri("link",objectsTarget[node2.uri][rel])) continue ;
+        if (! isProposedUri("link",objectsTarget[node2.uri][rel])) continue ;
 
         if ( relationInstancied(node1,node2,objectsTarget[node2.uri][rel],links) ) continue ;
         /* increment the number of link between the two nodes */
@@ -592,7 +592,7 @@ export function insertSuggestionsWithTwoNodesInstancied (node1, node2) {
 
       for (var rel2 in subjectsTarget[node2.uri]) {
         /* Filter if link are not desired by the user */
-        if (! forceLayoutManager.isProposedUri("link",subjectsTarget[node2.uri][rel2])) continue ;
+        if (! isProposedUri("link",subjectsTarget[node2.uri][rel2])) continue ;
 
         if ( relationInstancied(node2,node1,subjectsTarget[node2.uri][rel2],links) ) continue ;
 
@@ -620,7 +620,7 @@ export function insertSuggestionsWithTwoNodesInstancied (node1, node2) {
       // Manage positionnable entities
       const positionableEntities = userAbstraction.getPositionableEntities();
 
-      if ( forceLayoutManager.isProposedUri("link","positionable") &&
+      if ( isProposedUri("link","positionable") &&
            (node1.uri in positionableEntities) && (node2.uri in positionableEntities)) {
 
         node1.nlink[node2.id]++;
@@ -708,34 +708,34 @@ export function update () {
                     /* user want a new relation contraint betwwenn two node*/
 
                     //deselect all nodes and links
-                    forceLayoutManager.unSelectNodes();
-                    forceLayoutManager.unSelectLinks();
+                    unSelectNodes();
+                    unSelectLinks();
 
                     //select link
-                    forceLayoutManager.selectLink(d);
+                    selectLink(d);
 
                     if ( d.suggested ) {
                       const ll = [d];
                       graphBuilder.instanciateLink(ll);
-                      forceLayoutManager.updateInstanciateLinks(ll);
+                      updateInstanciateLinks(ll);
                       if ( d.source.suggested || d.target.suggested  ) {
                         var node = d.source.suggested?d.source:d.target;
                         graphBuilder.instanciateNode(node);
-                        forceLayoutManager.updateInstanciatedNode(node);
+                        updateInstanciatedNode(node);
                         nodeView.create(node);
                         attributesView.create(node);
                         // remove old suggestion
-                        forceLayoutManager.removeSuggestions();
+                        removeSuggestions();
                         if (selectNodes.length <= 1) {
-                          forceLayoutManager.unSelectNodes();
+                          unSelectNodes();
                         } else {
                           // insert new suggestion
-                          forceLayoutManager.insertSuggestions();
+                          insertSuggestions();
                         }
                       }
                       linksView.create(d);
                     }else{
-                      forceLayoutManager.removeSuggestions();
+                      removeSuggestions();
                     }
                     /* update node view  */
                     nodeView.hideAll();
@@ -744,11 +744,11 @@ export function update () {
                     /* update link view */
                     linksView.hideAll();
                     linksView.show(d);
-                    forceLayoutManager.update();
+                    update();
                   }else{
-                    forceLayoutManager.unSelectNodes();
-                    forceLayoutManager.unSelectLinks();
-                    forceLayoutManager.update();
+                    unSelectNodes();
+                    unSelectLinks();
+                    update();
                     attributesView.hideAll();
                     linksView.hideAll();
                   }
@@ -818,23 +818,23 @@ export function update () {
               .attr("uri", function (d) { return d.uri; })
               .attr("class", "nodeStrokeClass")
               .style('stroke', 'grey')
-              .style("fill", function (d) { return forceLayoutManager.getColorInstanciatedNode(d); })
+              .style("fill", function (d) { return getColorInstanciatedNode(d); })
               .style("opacity", function(d) {
                   return (d.suggested === true ? configDisplay.opacityNode : 1);
               })
               .on('click', function(d) {
-                forceLayoutManager.manageSelectedNodes(d);
-                forceLayoutManager.unSelectLinks();
+                manageSelectedNodes(d);
+                unSelectLinks();
               // Mouse up on a link
               //document.body.style.cursor = 'default';
                 // nothing todo for intance
                 if (! graphBuilder.isInstanciatedNode(d)) {
                   // When selected a node is not considered suggested anymore.
                   graphBuilder.instanciateNode(d);
-                  forceLayoutManager.updateInstanciatedNode(d);
+                  updateInstanciatedNode(d);
                   var listOfLinksInstancied = linksView.selectListLinksUser(links,d);
                   graphBuilder.instanciateLink(listOfLinksInstancied);
-                  forceLayoutManager.updateInstanciateLinks(listOfLinksInstancied);
+                  updateInstanciateLinks(listOfLinksInstancied);
                   for (var ll of listOfLinksInstancied ) {
                     linksView.create(ll);
                   }
@@ -857,11 +857,11 @@ export function update () {
                 };
 
                 /* remove old suggestion */
-                forceLayoutManager.removeSuggestions();
+                removeSuggestions();
                 /* insert new suggestion */
-                forceLayoutManager.insertSuggestions();
+                insertSuggestions();
                 /* update graph */
-                forceLayoutManager.update();
+                update();
               });
 
       nodeEnter.append("svg:text")//.append("tspan")

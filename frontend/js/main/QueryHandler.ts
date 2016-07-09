@@ -55,7 +55,7 @@ export function downloadResultsFile(lim) {
     });
 }
 
-export function displayResults(data) {
+function displayResults(data) { 
     // to clear and print new results
     $("#results").empty();
     if (data.values.length > 0) {

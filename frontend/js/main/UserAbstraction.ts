@@ -131,7 +131,7 @@ export function URI(uriEntity) {
     };
 
     /* Get value of an attribut with RDF format like rdfs:label */
-export function getAttrib(uriEntity,attrib) {
+function getAttrib(uriEntity,attrib) {
         if (!(uriEntity in entityInformationList)) {
           console.error(JSON.stringify(uriEntity) + " is not referenced in the user abstraction !");
           return;
@@ -156,7 +156,7 @@ export function getAttrib(uriEntity,attrib) {
 export function buildBaseNode(uriEntity) {
       var node = {
         uri   : uriEntity,
-        label : this.getAttrib(uriEntity,'rdfs:label')
+        label : getAttrib(uriEntity,'rdfs:label')
       } ;
       return node;
     };

@@ -12,7 +12,7 @@ export function remove (link) {
     $("#"+prefix+"Link-"+link.id).remove();
   };
 
-export function showTitle (link) {
+function showTitle (link) {
 
     nodeView.clean();
     $("#objectName").text(link.label);
@@ -32,7 +32,7 @@ export function hideAll () {
     $("div[id*='"+ prefix +"']" ).hide();
   };
 
-export function changeType(link, type) {
+function changeType(link, type) {
 
     // remove link
     var id = link.id;
@@ -60,10 +60,10 @@ export function changeType(link, type) {
     forceLayoutManager.selectLink(link);
   };
 
-export function reverseDir(link) {
+function reverseDir(link) {
 
     // remove rightview
-    linksView.remove(link);
+    remove(link);
 
     // remove link
     var id = link.id;
@@ -79,7 +79,7 @@ export function reverseDir(link) {
     link.target = buf;
 
     // new rightview for the reverse link
-    linksView.create(link);
+    create(link);
 
     // reload graph (it will recreate the link)
     forceLayoutManager.update();
@@ -101,13 +101,13 @@ export function changeSameRef(link, same_ref) {
 
 export function create (link) {
     if(link.positionable){
-      linksView.createPosistionableView(link);
+      createPosistionableView(link);
     }else{
-      linksView.createStandardView(link);
+      createStandardView(link);
     }
   };
 
-export function createStandardView (link) {
+function createStandardView (link) {
 
     var id_link = link.id;
 
@@ -122,7 +122,7 @@ export function createStandardView (link) {
     $("#viewDetails").append(details);
   };
 
-export function createPosistionableView (link) {
+function createPosistionableView (link) {
 
     var id_link = link.id;
 
@@ -194,7 +194,7 @@ export function createPosistionableView (link) {
            .append(strict);
 
     select.change(function() {
-      value = select.val();
+      let value = select.val();
       changeType(link, value);
     });
 

@@ -7,7 +7,7 @@ import * as userAbstraction from './UserAbstraction';
   Manage Menu View to select and unselect proposition of element/link
 */
 
-export function buildLiView(uri,label,submenu) {
+function buildLiView(uri,label,submenu) {
 
     var icheck = $("<span/>")
         .attr("class","glyphicon glyphicon-check");

@@ -60,15 +60,8 @@ export function setNodesAndLinksFromState(dump) {
       return [[],[]];
     };
 
-export function addInstanciedElt(node) {
-      _instanciedNodeGraph.push(node);
-    };
 
-export function addInstanciedLink(link) {
-      _instanciedLinkGraph.push(link);
-    };
-
-export function findElt(_array,id)  {
+function findElt(_array,id)  {
       var elt  = null ;
       var indexElt = -1;
       for (var i in _array ) {
@@ -143,7 +136,7 @@ export function removeInstanciedNode(node) {
       }
       return listLinkRemoved;
     };
-export function removeInstanciedLink(idLink) {
+function removeInstanciedLink(idLink) { /* FIXME: Dead code */
       // finding link
       var t = findElt(_instanciedLinkGraph,idLink);
 
@@ -172,7 +165,7 @@ export function removeInstanciedLink(idLink) {
     };
 
     /* create and return a new ID to instanciate a new SPARQL variate */
-export function setSPARQLVariateId(nodeOrLinkOrAttribute) {
+function setSPARQLVariateId(nodeOrLinkOrAttribute) {
       const lab = nodeOrLinkOrAttribute.label;
       if ( ! SPARQLIDgeneration[lab] ) {
         SPARQLIDgeneration[lab] = 0 ;
@@ -290,7 +283,7 @@ export function getLabelIndexNode(node) {
       };
 
     /* Build attribute with id, sparId inside a node from a generic uri attribute */
-export function setAttributeOrCategoryForNode(AttOrCatArray,attributeForUri,node) {
+function setAttributeOrCategoryForNode(AttOrCatArray,attributeForUri,node) {
       AttOrCatArray[attributeForUri.uri] = {} ;
       AttOrCatArray[attributeForUri.uri].type = attributeForUri.type ;
       AttOrCatArray[attributeForUri.uri].label = attributeForUri.label ;
@@ -408,7 +401,7 @@ export function buildConstraintsGraphForCategory(nodeAttribute,attributeId) {
       return [variates,constraintRelations,filters] ;
     };
 
-export function buildPositionableConstraintsGraph(infos,source,target,constraintRelations,filters) {
+function buildPositionableConstraintsGraph(infos,source,target,constraintRelations,filters) {
 
       var node = source ;
       var secondNode = target ;
