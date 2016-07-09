@@ -1,0 +1,51 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "isolatedModules": false,
+        "jsx": "react",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "declaration": false,
+        "noImplicitAny": false,
+        "noImplicitUseStrict": false,
+        "removeComments": false,
+        "noLib": false,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "sourceMap": true
+    },
+    "filesGlob": [
+        "typings/*.d.ts",
+        "js/**/*.ts",
+        "!node_modules/**"
+    ],
+    "exclude": [
+        "node_modules",
+        "typings/browser",
+        "typings/browser.d.ts"
+    ],
+    "compileOnSave": false,
+    "buildOnSave": false,
+    "atom": {
+        "rewriteTsconfig": true
+    },
+    "files": [
+        "typings/index.d.ts",
+        "js/index.ts",
+        "js/integration.ts",
+        "js/main/AttributesView.ts",
+        "js/main/ForceLayoutManager.ts",
+        "js/main/GraphBuilder.ts",
+        "js/main/index.ts",
+        "js/main/LinksView.ts",
+        "js/main/MenuFile.ts",
+        "js/main/MenuView.ts",
+        "js/main/NodeView.ts",
+        "js/main/QueryHandler.ts",
+        "js/main/UserAbstraction.ts",
+        "js/utils/Modal.ts",
+        "js/utils/RestManagement.ts"
+    ]
+}

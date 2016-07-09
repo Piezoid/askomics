@@ -1,0 +1,10 @@
+{
+  "globalDependencies": {
+    "bootstrap": "registry:dt/bootstrap#3.3.5+20160619023404",
+    "d3": "registry:dt/d3#0.0.0+20160628065019",
+    "handlebars": "registry:dt/handlebars#3.0.3+20160317120654",
+    "jquery": "registry:dt/jquery#1.10.0+20160704162008",
+    "jquery.fileupload": "registry:dt/jquery.fileupload#5.40.1+20160624153735",
+    "webpack-env": "registry:dt/webpack-env#1.12.2+20160316155526"
+  }
+}

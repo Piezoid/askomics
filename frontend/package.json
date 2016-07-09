@@ -1,0 +1,30 @@
+{
+  "name": "askomics-frontend",
+  "version": "0.0.1",
+  "description": "AskOmics is a visual SPARQL query builder for RDF database. This is the frontend",
+  "repository": "https://github.com/askomics/askomics.git",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack --watch",
+    "prepublish": "typings install && webpack --optimize-occurence-order --optimize-dedupe -p"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "blueimp-file-upload": "^9.12.5",
+    "blueimp-tmpl": "^3.4.0",
+    "bootstrap": "^3.3.5",
+    "d3": "^3.5.17",
+    "handlebars": "^4.0.5",
+    "jquery": "^1.12.4",
+    "jquery.ui.widget": "^1.10.3",
+    "typescript": "^2.0.0-dev.20160707"
+  },
+  "devDependencies": {
+    "imports-loader": "^0.6.5",
+    "ts-loader": "^0.8.2",
+    "typescript": "^1.8.10",
+    "typings": "^1.3.1",
+    "webpack": "^1.13.1"
+  }
+}

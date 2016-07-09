@@ -1,0 +1,4 @@
+// npm outputs
+node_modules
+npm-debug.log
+typings
